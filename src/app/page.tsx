@@ -158,11 +158,11 @@ export default function Home() {
 
           {/* Projects */}
           <section id="projects" className="mb-24">
-            <motion.h2 {...fadeUp(2.7)} className="mb-2 font-serif text-3xl">
+            <motion.h2 {...fadeUp(2.7)} className="mb-2 font-serif text-3xl text-accent">
               stuff i&apos;ve built
             </motion.h2>
             <motion.p {...fadeUp(2.8)} className="mb-8 text-sm text-text-muted">
-              some shipped, some still cooking
+              some shipped, some still cooking, some vibecoded, some not
             </motion.p>
             <div className="columns-1 gap-4 sm:columns-2">
               {projects.map((project, i) => (
@@ -248,6 +248,9 @@ export default function Home() {
 
           {/* Experience */}
           <section id="experience" className="mb-24">
+            <motion.h2 {...fadeUp(3.1)} className="mb-8 font-serif text-3xl">
+              jobs / internships
+            </motion.h2>
             <div className="space-y-8">
               {timeline.filter((e) => e.type === "work").map((entry, i) => (
                 <motion.div
@@ -269,6 +272,9 @@ export default function Home() {
 
           {/* Education */}
           <section className="mb-24">
+            <motion.h2 {...fadeUp(3.3)} className="mb-8 font-serif text-3xl">
+              education
+            </motion.h2>
             <div className="space-y-8">
               {timeline.filter((e) => e.type === "education").map((entry, i) => (
                 <motion.div
@@ -308,7 +314,7 @@ export default function Home() {
 
           {/* Footer */}
           <div className="mt-20 text-xs text-text-muted">
-            built by uzay with mass amounts of caffeine &middot; &copy; {new Date().getFullYear()}
+            built by uzay with mass amounts of caffeine. and yes, i made claude do the claude loading screen. &middot; &copy; {new Date().getFullYear()}
           </div>
 
         </div>
