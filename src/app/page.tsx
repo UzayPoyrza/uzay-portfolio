@@ -36,10 +36,10 @@ export default function Home() {
       <LoadingScreen />
       <CustomCursor />
 
-      <div className="mx-auto max-w-screen-xl px-6 md:flex md:h-screen md:gap-4 md:overflow-hidden md:px-12 lg:px-24">
+      <div className="mx-auto max-w-screen-xl px-6 md:flex md:h-screen md:gap-4 md:overflow-hidden md:py-20 md:pl-12 md:pr-0 lg:pl-24">
 
         {/* ---- LEFT SIDEBAR (fixed in place) ---- */}
-        <header className="shrink-0 pt-12 md:flex md:w-1/2 md:max-w-md md:flex-col md:justify-between md:py-20 lg:w-2/5">
+        <header className="shrink-0 pt-12 md:flex md:w-[340px] md:flex-col md:justify-between md:pt-0 lg:w-[400px]">
           <div>
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
@@ -118,7 +118,7 @@ export default function Home() {
         </header>
 
         {/* ---- RIGHT CONTENT (only this scrolls) ---- */}
-        <main className="pb-12 md:w-1/2 md:overflow-y-auto md:pt-20 md:pb-20 lg:w-3/5">
+        <main className="flex-1 pb-12 md:overflow-y-auto md:pr-12 md:pb-20 md:pl-12 lg:pr-24 lg:pl-20">
 
           {/* About */}
           <section id="about" className="mb-24">
