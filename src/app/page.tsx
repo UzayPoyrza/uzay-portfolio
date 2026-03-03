@@ -165,7 +165,7 @@ export default function Home() {
             <div className="grid grid-cols-3 gap-4">
               {projectCategories.map((cat) => (
                 <motion.div key={cat.key} {...fadeUp(2.8)}>
-                  <h3 className="mb-4 border-b border-accent/40 pb-2 text-xs font-medium tracking-widest text-accent">{cat.label}</h3>
+                  <h3 className="mb-4 border-b border-text/20 pb-2 font-serif text-lg tracking-wide text-text">{cat.label}</h3>
                   <div className="space-y-3">
                     {projects.filter((p) => p.category === cat.key).map((project) => (
                       <a
@@ -173,10 +173,10 @@ export default function Home() {
                         href={project.github || project.live || "#"}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group block rounded-md p-2 transition-all duration-200 hover:bg-bg-elevated"
+                        className="group block rounded-md p-3 transition-all duration-200 hover:bg-bg-elevated"
                       >
-                        <span className="font-serif text-sm text-text transition-colors group-hover:text-accent">{project.title}</span>
-                        <p className="mt-0.5 text-[11px] leading-snug text-text-muted">{project.subtitle}</p>
+                        <span className="font-serif text-base text-text transition-colors group-hover:text-accent">{project.title}</span>
+                        {project.subtitle && <p className="mt-0.5 text-[11px] text-text-muted">{project.subtitle}</p>}
                         <div className="mt-1.5 flex flex-wrap gap-1">
                           {project.tech.slice(0, 2).map((t) => (
                             <span key={t} className="rounded-full border border-border px-1.5 py-px text-[9px] text-text-muted transition-colors group-hover:border-accent/30">{t}</span>
