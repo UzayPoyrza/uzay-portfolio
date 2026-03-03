@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Instrument_Serif } from "next/font/google";
+import ThemeProvider from "@/components/layout/ThemeProvider";
 import "./globals.css";
 
 const geist = Geist({
@@ -31,11 +32,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
       <body
         className={`${geist.variable} ${instrumentSerif.variable} antialiased`}
       >
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );
