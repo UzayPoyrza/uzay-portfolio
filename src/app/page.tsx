@@ -70,12 +70,12 @@ export default function Home() {
                       <a
                         href={link.href}
                         className={`group flex items-center gap-4 text-xs font-medium tracking-widest transition-colors ${
-                          isActive ? "text-text" : "text-text-muted hover:text-text"
+                          isActive ? "text-accent" : "text-text-muted hover:text-text"
                         }`}
                       >
                         <span
-                          className={`h-px transition-all duration-300 ${
-                            isActive ? "w-16 bg-text" : "w-8 bg-text-muted group-hover:w-16 group-hover:bg-text"
+                          className={`transition-all duration-300 ${
+                            isActive ? "h-px w-16 bg-accent" : "h-px w-8 bg-text-muted group-hover:w-16 group-hover:bg-text"
                           }`}
                         />
                         {link.label}
@@ -131,10 +131,28 @@ export default function Home() {
               {...fadeUp(2.5)}
               className="leading-relaxed text-text-muted"
             >
-              cs grad from skidmore college. started coding in japan at uwc isak,
-              never really stopped. i&apos;ve built tools for turkish airlines pilots,
-              e-commerce platforms at optimum7, and an ai that beats me at checkers.
-              currently obsessed with shipping things that actually work.
+              CS grad from <span className="text-text">Skidmore College</span>.
+              I started coding in high school in Japan and never really stopped. Since then, I&apos;ve built tools for Turkish Airlines pilots,
+              e-commerce platforms at Optimum7, and an AI that beats me at checkers.
+            </motion.p>
+            <motion.p
+              {...fadeUp(2.6)}
+              className="mt-4 leading-relaxed text-text-muted"
+            >
+              I thought that was cool, but then{" "}
+              vibe coding happened
+              and I&apos;ve never been more hooked to coding ever. Got{" "}
+              <span className="text-accent">Claude Max</span> with my roommate and now
+              we&apos;ve got four{" "}
+              <span className="text-text">Claude Code CLI</span> terminals each running at all times,{" "}
+              <span className="text-text">MCPs</span> hooked up,
+              custom <span className="text-text">skills</span> loaded. The dopamine hit of
+              shipping in minutes what used to take weeks is genuinely unreasonable.
+              I&apos;m currently building two apps under my company{" "}
+              <span className="text-text">LaunchSpace</span> and they&apos;re about to
+              publish very very soon — not touching grass until they do.
+              After that, I&apos;d love to bring this energy to a team
+              where shipping quality product fast actually matters.
             </motion.p>
           </section>
 
