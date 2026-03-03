@@ -289,7 +289,7 @@ export default function Home() {
                     </h3>
                     <p className="mt-1 text-sm text-text-muted">{entry.description}</p>
                     {entry.highlight && (
-                      <span className="mt-1.5 inline-block rounded-full border border-accent/30 px-2 py-0.5 text-[10px] text-accent">
+                      <span className="mt-2 inline-block rounded-full bg-accent/15 px-3 py-1 text-xs font-medium text-accent">
                         {entry.highlight}
                       </span>
                     )}
@@ -305,7 +305,7 @@ export default function Home() {
               href={personal.resume}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-text-muted transition-colors hover:text-accent"
+              className="inline-flex items-center gap-2 text-sm text-accent transition-colors hover:text-accent-hover"
             >
               View Full Resume
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3.5 1.5h7v7M10 2L2 10"/></svg>
@@ -314,7 +314,7 @@ export default function Home() {
 
           {/* Footer */}
           <div className="mt-20 text-xs text-text-muted">
-            built by uzay with mass amounts of caffeine. and yes, i made claude do the claude loading screen. &middot; &copy; {new Date().getFullYear()}
+            built by uzay with mass amounts of caffeine. and yes, i made <span className="text-accent">claude</span> do the <span className="text-accent">claude</span> loading screen. &middot; &copy; {new Date().getFullYear()}
           </div>
 
         </div>

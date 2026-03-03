@@ -30,7 +30,7 @@ export const timeline: TimelineEntry[] = [
     organization: "Skidmore College",
     period: "2021 – 2025",
     description: "Computer Science graduate with a focus on AI and software engineering.",
-    highlight: "Davis-UWC Scholar",
+    highlight: "4.0 Major GPA",
   },
   {
     type: "education",
@@ -39,5 +39,6 @@ export const timeline: TimelineEntry[] = [
     period: "2019 – 2021",
     description:
       "Studied at a United World College in Karuizawa, Japan. Immersed in a culture of innovation and global perspectives.",
+    highlight: "Davis-UWC Scholar",
   },
 ];
