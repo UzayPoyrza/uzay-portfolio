@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Navbar from "@/components/layout/Navbar";
 import CustomCursor from "@/components/layout/CustomCursor";
+import LoadingScreen from "@/components/layout/LoadingScreen";
 import { personal } from "@/data/personal";
 import { projects } from "@/data/projects";
 import { skillCategories } from "@/data/skills";
@@ -37,31 +38,23 @@ function BentoCard({
   );
 }
 
-/* Masonry heights for visual variety — alternates tall/short across 3 cols */
 const masonryHeights = ["aspect-[4/5]", "aspect-[4/3]", "aspect-[3/4]", "aspect-square"];
 
 export default function Home() {
   return (
     <>
+      <LoadingScreen />
       <CustomCursor />
       <Navbar />
       <main className="mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-12">
         <div className="grid auto-rows-auto gap-3 md:grid-cols-12 md:gap-4">
 
-          {/* ---- Hero + Photo ---- */}
-          <BentoCard className="flex flex-col justify-end md:col-span-7 md:min-h-[320px]" delay={0}>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="mb-2 text-sm tracking-widest text-accent uppercase"
-            >
-              Portfolio
-            </motion.p>
+          {/* ---- Hero ---- */}
+          <BentoCard className="flex flex-col justify-end md:col-span-7 md:min-h-[320px]" delay={2.3}>
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+              transition={{ delay: 2.4, duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
               className="font-serif text-[clamp(2.5rem,6vw,5rem)] leading-[0.95] tracking-tight"
             >
               Uzay<br />Poyraz
@@ -69,14 +62,14 @@ export default function Home() {
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.6 }}
+              transition={{ delay: 2.8, duration: 0.6 }}
               className="mt-4 text-text-muted"
             >
-              {personal.title}
+              i build things, break things, and occasionally ship them.
             </motion.p>
           </BentoCard>
 
-          <BentoCard className="p-0 md:col-span-5 md:min-h-[320px]" delay={0.1}>
+          <BentoCard className="p-0 md:col-span-5 md:min-h-[320px]" delay={2.4}>
             <div className="relative h-full min-h-[280px] w-full">
               <Image
                 src={personal.profileImage}
@@ -89,14 +82,17 @@ export default function Home() {
             </div>
           </BentoCard>
 
-          {/* ---- About + Connect ---- */}
-          <BentoCard className="md:col-span-8" delay={0.15} id="about">
+          {/* ---- About (witty) + Connect ---- */}
+          <BentoCard className="md:col-span-8" delay={2.5} id="about">
             <h2 className="mb-3 text-sm tracking-widest text-accent uppercase">About</h2>
             <p className="leading-relaxed text-text-muted">
-              {personal.bio[0]} {personal.bio[2]}
+              cs grad from skidmore college. started coding in japan at uwc isak,
+              never really stopped. i&apos;ve built tools for turkish airlines pilots,
+              e-commerce platforms at optimum7, and an ai that beats me at checkers.
+              currently obsessed with shipping things that actually work.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
-              {personal.languages.map((lang) => (
+              {["english", "turkish", "japanese"].map((lang) => (
                 <span
                   key={lang}
                   className="rounded-full border border-border px-3 py-1 text-xs text-text-muted transition-colors hover:border-accent hover:text-accent"
@@ -104,14 +100,20 @@ export default function Home() {
                   {lang}
                 </span>
               ))}
+              <span className="rounded-full border border-border px-3 py-1 text-xs text-text-muted transition-colors hover:border-accent hover:text-accent">
+                soccer
+              </span>
+              <span className="rounded-full border border-border px-3 py-1 text-xs text-text-muted transition-colors hover:border-accent hover:text-accent">
+                music production
+              </span>
             </div>
           </BentoCard>
 
-          <BentoCard className="flex flex-col justify-between md:col-span-4" delay={0.2}>
+          <BentoCard className="flex flex-col justify-between md:col-span-4" delay={2.6}>
             <h2 className="mb-4 text-sm tracking-widest text-accent uppercase">Connect</h2>
             <div className="flex flex-col gap-3">
               <a href={`mailto:${personal.email}`} className="text-sm text-text-muted transition-colors hover:text-accent">
-                {personal.email} &rarr;
+                Mail &rarr;
               </a>
               <a href={personal.linkedin} target="_blank" rel="noopener noreferrer" className="text-sm text-text-muted transition-colors hover:text-accent">
                 LinkedIn &rarr;
@@ -125,14 +127,20 @@ export default function Home() {
             </div>
           </BentoCard>
 
-          {/* ---- Projects — masonry 3-col grid ---- */}
+          {/* ---- Projects ---- */}
           <div id="projects" className="md:col-span-12">
             <motion.h2
-              {...fadeUp(0.3)}
-              className="mb-6 text-center font-serif text-3xl md:text-4xl"
+              {...fadeUp(2.7)}
+              className="mb-2 text-center font-serif text-3xl md:text-4xl"
             >
-              Projects
+              stuff i&apos;ve built
             </motion.h2>
+            <motion.p
+              {...fadeUp(2.8)}
+              className="mb-6 text-center text-sm text-text-muted"
+            >
+              some shipped, some still cooking
+            </motion.p>
           </div>
 
           <div className="md:col-span-12">
@@ -140,7 +148,7 @@ export default function Home() {
               {projects.map((project, i) => (
                 <motion.div
                   key={project.id}
-                  {...fadeUp(0.3 + i * 0.1)}
+                  {...fadeUp(2.8 + i * 0.1)}
                   className="group mb-4 break-inside-avoid"
                 >
                   <a
@@ -179,10 +187,25 @@ export default function Home() {
           </div>
 
           {/* ---- Skills ---- */}
-          <BentoCard className="md:col-span-12" delay={0.45}>
-            <h2 className="mb-4 text-sm tracking-widest text-accent uppercase">Skills</h2>
-            <div className="grid gap-6 md:grid-cols-3">
-              {skillCategories.map((cat) => (
+          <BentoCard className="md:col-span-5" delay={3.2}>
+            <h2 className="mb-2 text-sm tracking-widest text-accent uppercase">Most Important Skills</h2>
+            <p className="mb-4 text-sm text-text-muted">the stuff that actually matters</p>
+            <div className="flex flex-wrap gap-1.5">
+              {skillCategories[0].skills.map((skill) => (
+                <span
+                  key={skill}
+                  className="rounded-full border border-accent/50 px-3 py-1.5 text-xs text-accent transition-all duration-200 hover:bg-accent hover:text-bg hover:-translate-y-px"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </BentoCard>
+
+          <BentoCard className="md:col-span-7" delay={3.25}>
+            <h2 className="mb-2 text-sm tracking-widest text-text-muted uppercase">I also know these i guess</h2>
+            <div className="mt-4 grid gap-4 sm:grid-cols-3">
+              {skillCategories.slice(1).map((cat) => (
                 <div key={cat.title}>
                   <h3 className="mb-2 text-xs font-medium tracking-wider text-text-muted uppercase">{cat.title}</h3>
                   <div className="flex flex-wrap gap-1.5">
@@ -201,7 +224,7 @@ export default function Home() {
           </BentoCard>
 
           {/* ---- Experience & Education ---- */}
-          <BentoCard id="experience" className="md:col-span-7" delay={0.5}>
+          <BentoCard id="experience" className="md:col-span-7" delay={3.3}>
             <h2 className="mb-4 text-sm tracking-widest text-accent uppercase">Experience</h2>
             <div className="space-y-5">
               {timeline.filter((e) => e.type === "work").map((entry, i) => (
@@ -215,7 +238,7 @@ export default function Home() {
             </div>
           </BentoCard>
 
-          <BentoCard className="md:col-span-5" delay={0.55}>
+          <BentoCard className="md:col-span-5" delay={3.4}>
             <h2 className="mb-4 text-sm tracking-widest text-accent uppercase">Education</h2>
             <div className="space-y-5">
               {timeline.filter((e) => e.type === "education").map((entry, i) => (
@@ -234,34 +257,13 @@ export default function Home() {
             </div>
           </BentoCard>
 
-          {/* ---- Demo teaser + CTA ---- */}
-          <BentoCard className="md:col-span-8" delay={0.6}>
-            <h2 className="mb-2 text-sm tracking-widest text-accent uppercase">Interactive Demos</h2>
-            <p className="text-text-muted">Experiments with audio synthesis and AI — coming soon.</p>
-            <div className="mt-4 h-16 w-full overflow-hidden rounded-xl border border-border">
-              <svg viewBox="0 0 800 64" className="h-full w-full" preserveAspectRatio="none">
-                <path d="M0,32 Q50,10 100,32 T200,32 T300,32 T400,32 T500,32 T600,32 T700,32 T800,32" stroke="var(--border)" strokeWidth="1" fill="none" />
-                <path d="M0,32 Q50,10 100,32 T200,32 T300,32 T400,32 T500,32 T600,32 T700,32 T800,32" stroke="var(--accent)" strokeWidth="1" fill="none" opacity="0.3" strokeDasharray="4 4" />
-              </svg>
-            </div>
-          </BentoCard>
-
-          <BentoCard className="flex flex-col items-center justify-center text-center md:col-span-4" delay={0.65}>
-            <p className="font-serif text-xl">Let&apos;s build something.</p>
-            <a
-              href={`mailto:${personal.email}`}
-              className="mt-4 rounded-full border border-accent px-5 py-2 text-sm text-accent transition-colors hover:bg-accent hover:text-bg"
-            >
-              Get in touch
-            </a>
-          </BentoCard>
 
         </div>
 
         {/* Footer */}
         <div className="mt-8 flex items-center justify-between border-t border-border pt-6 text-xs text-text-muted">
-          <span>&copy; {new Date().getFullYear()} Uzay Poyraz</span>
-          <span>Built with Next.js</span>
+          <span>built by uzay with mass amounts of caffeine</span>
+          <span>&copy; {new Date().getFullYear()}</span>
         </div>
       </main>
     </>

@@ -5,6 +5,10 @@ export interface SkillCategory {
 
 export const skillCategories: SkillCategory[] = [
   {
+    title: "Vibe Coding",
+    skills: ["Claude Code", "MCPs", "Skills", "Hooks", "v0", "OpenClaw"],
+  },
+  {
     title: "Languages",
     skills: ["Python", "Swift", "C", "C++", "Java", "JavaScript", "TypeScript", "SQL", "HTML", "CSS"],
   },
@@ -14,6 +18,6 @@ export const skillCategories: SkillCategory[] = [
   },
   {
     title: "Tools",
-    skills: ["Git", "Jira", "Linux", "Arduino", "Figma", "Vercel", "Cursor"],
+    skills: ["Git", "Jira", "Linux", "Arduino", "Figma", "Vercel"],
   },
 ];
