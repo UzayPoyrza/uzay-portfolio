@@ -7,7 +7,7 @@ import LoadingScreen from "@/components/layout/LoadingScreen";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { personal } from "@/data/personal";
-import { projects } from "@/data/projects";
+import { projects, projectCategories } from "@/data/projects";
 import { skillCategories } from "@/data/skills";
 import { timeline } from "@/data/experience";
 
@@ -22,8 +22,6 @@ const navLinks = [
   { label: "PROJECTS", href: "#projects" },
   { label: "EXPERIENCE", href: "#experience" },
 ];
-
-const masonryHeights = ["aspect-[4/5]", "aspect-[4/3]", "aspect-[3/4]", "aspect-square"];
 
 const sectionIds = ["about", "projects", "experience"];
 
@@ -164,50 +162,35 @@ export default function Home() {
             <motion.p {...fadeUp(2.8)} className="mb-8 text-sm text-text-muted">
               some shipped, some still cooking, some vibecoded, some not
             </motion.p>
-            <div className="columns-1 gap-4 sm:columns-2">
-              {projects.map((project, i) => (
-                <motion.div
-                  key={project.id}
-                  {...fadeUp(2.8 + i * 0.1)}
-                  className="group mb-4 break-inside-avoid"
-                >
-                  <a
-                    href={project.github || project.live || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block"
-                  >
-                    <div className={`relative w-full overflow-hidden rounded-2xl bg-bg-elevated ${masonryHeights[i % masonryHeights.length]}`}>
-                      <Image
-                        src={project.image}
-                        alt={project.title}
-                        fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                      />
-                    </div>
-                    <div className="mt-3 flex items-center justify-between px-1">
-                      <h3 className="font-serif text-lg">{project.title}</h3>
-                      <div className="flex gap-1.5">
-                        {project.tech.slice(0, 3).map((t) => (
-                          <span
-                            key={t}
-                            className="flex h-6 w-6 items-center justify-center rounded-full border border-border text-[9px] font-medium text-text-muted"
-                            title={t}
-                          >
-                            {t[0]}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </a>
+            <div className="grid grid-cols-3 gap-4">
+              {projectCategories.map((cat) => (
+                <motion.div key={cat.key} {...fadeUp(2.8)}>
+                  <h3 className="mb-4 border-b border-accent/40 pb-2 text-xs font-medium tracking-widest text-accent">{cat.label}</h3>
+                  <div className="space-y-3">
+                    {projects.filter((p) => p.category === cat.key).map((project) => (
+                      <a
+                        key={project.id}
+                        href={project.github || project.live || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group block rounded-md p-2 transition-all duration-200 hover:bg-bg-elevated"
+                      >
+                        <span className="font-serif text-sm text-text transition-colors group-hover:text-accent">{project.title}</span>
+                        <p className="mt-0.5 text-[11px] leading-snug text-text-muted">{project.subtitle}</p>
+                        <div className="mt-1.5 flex flex-wrap gap-1">
+                          {project.tech.slice(0, 2).map((t) => (
+                            <span key={t} className="rounded-full border border-border px-1.5 py-px text-[9px] text-text-muted transition-colors group-hover:border-accent/30">{t}</span>
+                          ))}
+                        </div>
+                      </a>
+                    ))}
+                  </div>
                 </motion.div>
               ))}
             </div>
-          </section>
 
           {/* Skills */}
-          <section className="mb-24">
+          <div id="experience" className="mt-16">
             <div className="grid gap-6 md:grid-cols-2">
               <motion.div {...fadeUp(3.0)}>
                 <h3 className="mb-2 text-sm tracking-widest text-accent uppercase">Most Important Skills</h3>
@@ -244,10 +227,11 @@ export default function Home() {
                 </div>
               </motion.div>
             </div>
+          </div>
           </section>
 
           {/* Experience */}
-          <section id="experience" className="mb-24">
+          <section className="mb-24">
             <motion.h2 {...fadeUp(3.1)} className="mb-8 font-serif text-3xl">
               jobs / internships
             </motion.h2>
