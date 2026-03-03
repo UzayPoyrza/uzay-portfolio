@@ -139,7 +139,7 @@ export default function Home() {
               {...fadeUp(2.6)}
               className="mt-4 leading-relaxed text-text-muted"
             >
-              I thought that was cool, but then{" "}
+              I thought that was cool and all, but then{" "}
               vibe coding happened
               and I&apos;ve never been more hooked to coding ever. Got{" "}
               <span className="text-accent">Claude Max</span> with my roommate and now
@@ -224,7 +224,7 @@ export default function Home() {
                 </div>
               </motion.div>
               <motion.div {...fadeUp(3.1)}>
-                <h3 className="mb-4 text-sm tracking-widest text-text-muted uppercase">i also know these i guess</h3>
+                <h3 className="mb-4 text-sm text-text-muted">i also know these i guess :)</h3>
                 <div className="space-y-4">
                   {skillCategories.slice(1).map((cat) => (
                     <div key={cat.title}>
