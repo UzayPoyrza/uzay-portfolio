@@ -36,11 +36,12 @@ export default function Home() {
       <LoadingScreen />
       <CustomCursor />
 
-      <div className="mx-auto max-w-screen-xl px-6 md:flex md:h-screen md:gap-4 md:overflow-hidden md:py-20 md:pl-12 md:pr-0 lg:pl-24">
-
-        {/* ---- LEFT SIDEBAR (fixed in place) ---- */}
-        <header className="shrink-0 pt-12 md:flex md:w-[340px] md:flex-col md:justify-between md:pt-0 lg:w-[400px]">
-          <div>
+      {/* ---- LEFT SIDEBAR (fixed on desktop) ---- */}
+      <header
+        className="px-6 pt-12 md:fixed md:top-0 md:flex md:h-screen md:w-[340px] md:flex-col md:justify-between md:py-20 lg:w-[400px]"
+        style={{ left: 'max(3rem, calc((100vw - 1280px) / 2 + 6rem))' }}
+      >
+        <div>
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -115,10 +116,14 @@ export default function Home() {
               )}
             </button>
           </motion.div>
-        </header>
+      </header>
 
-        {/* ---- RIGHT CONTENT (only this scrolls) ---- */}
-        <main className="flex-1 pb-12 md:overflow-y-auto md:pr-12 md:pb-20 md:pl-12 lg:pr-24 lg:pl-20">
+      {/* ---- RIGHT CONTENT (only this scrolls) ---- */}
+      <main
+        className="px-6 pb-12 md:h-screen md:overflow-y-auto md:px-0 md:pb-20 md:pl-12 lg:pl-20"
+        style={{ marginLeft: 'max(calc(340px + 6rem), calc((100vw - 1280px) / 2 + 6rem + 400px + 5rem))' }}
+      >
+        <div className="max-w-2xl md:pt-20">
 
           {/* About */}
           <section id="about" className="mb-24">
@@ -288,8 +293,8 @@ export default function Home() {
             built by uzay with mass amounts of caffeine &middot; &copy; {new Date().getFullYear()}
           </div>
 
-        </main>
-      </div>
+        </div>
+      </main>
     </>
   );
 }
