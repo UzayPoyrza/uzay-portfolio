@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import CustomCursor from "@/components/layout/CustomCursor";
 import LoadingScreen from "@/components/layout/LoadingScreen";
@@ -30,6 +31,7 @@ const sectionIds = ["about", "projects", "experience"];
 export default function Home() {
   const { theme, toggle } = useTheme();
   const activeSection = useActiveSection(sectionIds);
+  const [expandedProject, setExpandedProject] = useState<string | null>(null);
 
   return (
     <>
@@ -198,22 +200,81 @@ export default function Home() {
                 <motion.div key={cat.key} {...fadeUp(2.8)}>
                   <h3 className="mb-4 border-b border-text/20 pb-2 font-serif text-lg tracking-wide text-text">{cat.label}</h3>
                   <div className="space-y-3">
-                    {projects.filter((p) => p.category === cat.key).map((project) => (
-                      <a
-                        key={project.id}
-                        href={project.github || project.live || "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`group block rounded-md border p-3 transition-all duration-200 hover:bg-bg-elevated ${
-                          project.status === "live" ? "border-green-500/50" :
-                          project.status === "dev" ? "border-yellow-500/50" :
-                          "border-red-500/50"
-                        }`}
-                      >
-                        <span className="font-serif text-base text-text transition-colors group-hover:text-accent">{project.title}</span>
-                        {project.subtitle && <p className="mt-0.5 text-[11px] text-text-muted">{project.subtitle}</p>}
-                      </a>
-                    ))}
+                    {projects.filter((p) => p.category === cat.key).map((project) => {
+                      const isExpanded = expandedProject === project.id;
+                      return (
+                        <div
+                          key={project.id}
+                          onClick={() => setExpandedProject(isExpanded ? null : project.id)}
+                          className={`group cursor-pointer rounded-md border p-3 transition-all duration-200 hover:bg-bg-elevated ${
+                            project.status === "live" ? "border-green-500/50" :
+                            project.status === "dev" ? "border-yellow-500/50" :
+                            "border-red-500/50"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0">
+                              <span className="font-serif text-base text-text transition-colors group-hover:text-accent">{project.title}</span>
+                              {project.subtitle && <p className="mt-0.5 text-[11px] text-text-muted">{project.subtitle}</p>}
+                            </div>
+                            <motion.svg
+                              animate={{ rotate: isExpanded ? 180 : 0 }}
+                              transition={{ duration: 0.2 }}
+                              width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                              className="mt-1 shrink-0 text-text-muted"
+                            >
+                              <polyline points="6 9 12 15 18 9" />
+                            </motion.svg>
+                          </div>
+                          {(project.github || project.live) && (
+                            <div className="mt-2 flex gap-3">
+                              {project.github && (
+                                <a
+                                  href={project.github}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="text-xs text-accent transition-colors hover:text-accent-hover"
+                                >
+                                  GitHub
+                                </a>
+                              )}
+                              {project.live && (
+                                <a
+                                  href={project.live}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="text-xs text-accent transition-colors hover:text-accent-hover"
+                                >
+                                  Live Site
+                                </a>
+                              )}
+                            </div>
+                          )}
+                          <AnimatePresence>
+                            {isExpanded && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.25, ease: "easeInOut" }}
+                                className="overflow-hidden"
+                              >
+                                <p className="mt-3 text-sm leading-relaxed text-text-muted">{project.description}</p>
+                                <div className="mt-3 flex flex-wrap gap-1.5">
+                                  {project.tech.map((t) => (
+                                    <span key={t} className="rounded border border-text/20 px-1.5 py-0.5 font-mono text-[10px] text-text-muted">
+                                      {t}
+                                    </span>
+                                  ))}
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      );
+                    })}
                   </div>
                 </motion.div>
               ))}
