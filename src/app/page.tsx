@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import CustomCursor from "@/components/layout/CustomCursor";
@@ -32,6 +32,13 @@ export default function Home() {
   const { theme, toggle } = useTheme();
   const activeSection = useActiveSection(sectionIds);
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <>
@@ -46,26 +53,52 @@ export default function Home() {
         }
       `}</style>
 
-      {/* ---- MOBILE TOP NAV (fixed) ---- */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center border-b border-border/50 bg-bg/80 px-6 py-3 backdrop-blur-md md:hidden">
-        <ul className="flex gap-6">
-          {navLinks.map((link) => {
-            const isActive = activeSection === link.href.slice(1);
-            return (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  className={`text-[10px] font-medium tracking-widest transition-colors ${
-                    isActive ? "text-accent" : "text-text-muted"
-                  }`}
-                >
-                  {link.label}
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
+      {/* ---- MOBILE TOP NAV (morphs to pill on scroll) ---- */}
+      <motion.nav
+        className="fixed left-0 right-0 z-50 flex items-center justify-center md:hidden"
+        animate={{
+          top: scrolled ? 12 : 0,
+          paddingLeft: scrolled ? 0 : 24,
+          paddingRight: scrolled ? 0 : 24,
+        }}
+        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <motion.div
+          className={`flex items-center justify-center backdrop-blur-md ${
+            scrolled ? "w-auto" : "w-screen"
+          }`}
+          animate={{
+            paddingTop: scrolled ? 8 : 12,
+            paddingBottom: scrolled ? 8 : 12,
+            paddingLeft: scrolled ? 24 : 24,
+            paddingRight: scrolled ? 24 : 24,
+            borderRadius: scrolled ? 999 : 0,
+            backgroundColor: scrolled ? "var(--bg-elevated)" : "var(--bg)",
+            boxShadow: scrolled
+              ? "0 4px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--border)"
+              : "0 1px 0 0 var(--border)",
+          }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <ul className="flex gap-6">
+            {navLinks.map((link) => {
+              const isActive = activeSection === link.href.slice(1);
+              return (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    className={`text-[10px] font-medium tracking-widest transition-colors ${
+                      isActive ? "text-accent" : "text-text-muted"
+                    }`}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </motion.div>
+      </motion.nav>
 
       {/* ---- LEFT SIDEBAR (fixed on desktop) ---- */}
       <header
