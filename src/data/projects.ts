@@ -21,7 +21,7 @@ export const projects: Project[] = [
     title: "Neurotype",
     subtitle: "Science-Based Meditation App",
     description: "Noticed no meditation app is actually science-based, even though research shows certain techniques can be borderline therapeutic. That idea alone was enough to start building a full production-grade app from scratch. Took a while but it's coming together. Launching soon.",
-    tech: ["React Native", "TypeScript", "Supabase"],
+    tech: ["React Native", "TypeScript", "Supabase", "so many more"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "apps",
     status: "dev",
