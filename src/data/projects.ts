@@ -68,8 +68,7 @@ export const projects: Project[] = [
     id: "launchspace",
     title: "LaunchSpace",
     subtitle: "Web & AI Applications Company",
-    description:
-      "A professional company website for a web and mobile app development company. Features a responsive dark-themed UI, newsletter system with double opt-in via Brevo, dynamic app showcase, and Lighthouse 90+ performance. GDPR-ready with validated inputs and CSP headers.",
+    description: "Company website with a pretty clean UI. Claude could probably one-shot this now, but at the time it took a while building with early Cursor.",
     tech: ["React", "TypeScript", "Node.js", "Vercel"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "web",
