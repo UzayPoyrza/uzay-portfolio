@@ -31,7 +31,7 @@ export const projects: Project[] = [
     id: "volo",
     title: "Volo",
     subtitle: "AviaAssist reborn  - more features, more useful, more pilots involved, built with and integrated AI",
-    description: "AviaAssist was loved by pilots but never hit production  - so we went bigger. Volo is the full rebuild with AI baked in, more features, and more pilots involved. We also set up OpenClaw, a WhatsApp-based pilot assistant, directly with one of the pilots. Insane experience, launching soon.",
+    description: "AviaAssist was loved by pilots but never hit production  - so we went bigger. Volo is the full rebuild with AI baked in, more features, and more pilots involved. We also set up OpenClaw on WhatsApp to directly involve one of the pilots with development. Insane experience, launching soon.",
     tech: ["React Native", "TypeScript", "Supabase"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "apps",
