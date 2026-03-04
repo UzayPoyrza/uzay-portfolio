@@ -151,7 +151,7 @@ export default function Home() {
 
       {/* ---- RIGHT CONTENT (only this scrolls) ---- */}
       <main
-        className="content-main px-6 pb-12 md:h-screen md:overflow-y-auto md:px-0 md:pb-20 md:pl-12 lg:pl-20"
+        className="content-main px-6 pb-12 md:px-0 md:pb-20 md:pl-12 lg:pl-20"
         style={{ marginLeft: 'max(calc(340px + 6rem), calc((100vw - 1280px) / 2 + 6rem + 400px + 5rem))' }}
       >
         <div className="max-w-2xl md:pt-20">
