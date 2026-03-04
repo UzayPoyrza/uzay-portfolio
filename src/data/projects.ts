@@ -57,7 +57,7 @@ export const projects: Project[] = [
     title: "Gym Booking App",
     subtitle: "Solving Gym Overcrowding",
     description:
-      "Built at UWC ISAK Japan to address gym overcrowding during COVID-19 restrictions. Developed with the PE department, featuring smart scheduling, real-time availability tracking, COVID contact tracing integration, and an admin control panel. Designed to match the school's existing internal system.",
+      "My first real project — built at UWC ISAK Japan during COVID to solve gym overcrowding. Full-stack booking system with scheduling, live availability, and an admin panel. Rough around the edges, but it worked and people used it. Here for historic value.",
     tech: ["Flask", "Python", "SQL", "JavaScript"],
     image: "/images/projects/smallgym_thumbnail.png",
     category: "apps",
