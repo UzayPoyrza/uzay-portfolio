@@ -7,12 +7,14 @@ interface AudioPlayerProps {
   src?: string;
   title: string;
   description: string;
+  borderless?: boolean;
 }
 
 export default function AudioPlayer({
   src,
   title,
   description,
+  borderless = false,
 }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
@@ -53,7 +55,7 @@ export default function AudioPlayer({
   const hasAudio = !!src;
 
   return (
-    <div className="border border-border p-6 transition-colors hover:border-accent/30">
+    <div className={borderless ? "" : "border border-border p-6 transition-colors hover:border-accent/30"}>
       <div className="mb-4 flex items-start justify-between">
         <div>
           <h4 className="font-serif text-xl">{title}</h4>

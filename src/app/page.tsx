@@ -10,6 +10,8 @@ import { personal } from "@/data/personal";
 import { projects, projectCategories } from "@/data/projects";
 import { skillCategories } from "@/data/skills";
 import { timeline } from "@/data/experience";
+import MeditationDemo from "@/components/demos/MeditationDemo";
+import CheckersDemo from "@/components/demos/CheckersDemo";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 20 },
@@ -20,10 +22,11 @@ const fadeUp = (delay = 0) => ({
 const navLinks = [
   { label: "ABOUT", href: "#about" },
   { label: "PROJECTS", href: "#projects" },
+  { label: "DEMOS", href: "#demos" },
   { label: "EXPERIENCE", href: "#experience" },
 ];
 
-const sectionIds = ["about", "projects", "experience"];
+const sectionIds = ["about", "projects", "demos", "experience"];
 
 export default function Home() {
   const { theme, toggle } = useTheme();
@@ -173,65 +176,44 @@ export default function Home() {
                         href={project.github || project.live || "#"}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group block rounded-md p-3 transition-all duration-200 hover:bg-bg-elevated"
+                        className={`group block rounded-md border p-3 transition-all duration-200 hover:bg-bg-elevated ${
+                          project.status === "live" ? "border-green-500/50" :
+                          project.status === "dev" ? "border-yellow-500/50" :
+                          "border-red-500/50"
+                        }`}
                       >
                         <span className="font-serif text-base text-text transition-colors group-hover:text-accent">{project.title}</span>
                         {project.subtitle && <p className="mt-0.5 text-[11px] text-text-muted">{project.subtitle}</p>}
-                        <div className="mt-1.5 flex flex-wrap gap-1">
-                          {project.tech.slice(0, 2).map((t) => (
-                            <span key={t} className="rounded-full border border-border px-1.5 py-px text-[9px] text-text-muted transition-colors group-hover:border-accent/30">{t}</span>
-                          ))}
-                        </div>
                       </a>
                     ))}
                   </div>
                 </motion.div>
               ))}
             </div>
+            <motion.div {...fadeUp(3.0)} className="mt-8 flex items-center justify-center gap-4 text-[11px] text-text-muted">
+              <span className="flex items-center gap-1.5"><span className="inline-block h-2 w-2 rounded-full bg-green-500" />live</span>
+              <span className="flex items-center gap-1.5"><span className="inline-block h-2 w-2 rounded-full bg-yellow-500" />in development</span>
+              <span className="flex items-center gap-1.5"><span className="inline-block h-2 w-2 rounded-full bg-red-500" />discontinued</span>
+            </motion.div>
 
-          {/* Skills */}
-          <div id="experience" className="mt-16">
-            <div className="grid gap-6 md:grid-cols-2">
-              <motion.div {...fadeUp(3.0)}>
-                <h3 className="mb-2 text-sm tracking-widest text-accent uppercase">Most Important Skills</h3>
-                <p className="mb-4 text-sm text-text-muted">the stuff that actually matters</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {skillCategories[0].skills.map((skill) => (
-                    <span
-                      key={skill}
-                      className="rounded-full border border-accent/50 px-3 py-1.5 text-xs text-accent transition-all duration-200 hover:bg-accent hover:text-bg hover:-translate-y-px"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </motion.div>
-              <motion.div {...fadeUp(3.1)}>
-                <h3 className="mb-4 text-sm text-text-muted">i also know these i guess :)</h3>
-                <div className="space-y-4">
-                  {skillCategories.slice(1).map((cat) => (
-                    <div key={cat.title}>
-                      <h4 className="mb-1.5 text-xs font-medium tracking-wider text-text-muted uppercase">{cat.title}</h4>
-                      <div className="flex flex-wrap gap-1.5">
-                        {cat.skills.map((skill) => (
-                          <span
-                            key={skill}
-                            className="rounded-full border border-border px-3 py-1.5 text-xs text-text-muted transition-all duration-200 hover:border-accent hover:text-text hover:-translate-y-px"
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            </div>
-          </div>
+          </section>
+
+          {/* Demos */}
+          <section id="demos" className="mb-24">
+            <motion.h2 {...fadeUp(2.9)} className="mb-2 font-serif text-3xl text-accent">
+              try it yourself
+            </motion.h2>
+            <motion.p {...fadeUp(3.0)} className="mb-8 text-sm text-text-muted">
+              demos you can actually interact with
+            </motion.p>
+            <motion.div {...fadeUp(3.0)} className="space-y-6">
+              <MeditationDemo />
+              <CheckersDemo />
+            </motion.div>
           </section>
 
           {/* Experience */}
-          <section className="mb-24">
+          <section id="experience" className="mb-24">
             <motion.h2 {...fadeUp(3.1)} className="mb-8 font-serif text-3xl">
               jobs / internships
             </motion.h2>
