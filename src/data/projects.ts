@@ -1,3 +1,5 @@
+export type ProjectStatus = "live" | "dev" | "discontinued";
+
 export interface Project {
   id: string;
   title: string;
@@ -6,12 +8,33 @@ export interface Project {
   tech: string[];
   image: string;
   category: "apps" | "ai" | "web";
+  status: ProjectStatus;
   github?: string;
   live?: string;
   extra?: string;
 }
 
 export const projects: Project[] = [
+  {
+    id: "neurotype",
+    title: "Neurotype",
+    subtitle: "Science-Based Meditation App",
+    description: "A neurodivergent-focused application.",
+    tech: ["React Native", "TypeScript", "Supabase"],
+    image: "/images/projects/aviaassist_thumbnail.png",
+    category: "apps",
+    status: "dev",
+  },
+  {
+    id: "volo",
+    title: "Volo",
+    subtitle: "AviaAssist reborn — more features, more useful, more pilots involved, built with and integrated AI",
+    description: "A pilot-focused application.",
+    tech: ["React Native", "TypeScript", "Supabase"],
+    image: "/images/projects/aviaassist_thumbnail.png",
+    category: "apps",
+    status: "dev",
+  },
   {
     id: "aviaassist",
     title: "AviaAssist",
@@ -21,6 +44,7 @@ export const projects: Project[] = [
     tech: ["Swift", "Firebase", "Figma", "iOS"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "apps",
+    status: "discontinued",
     github: "https://github.com/aydaruya/AviaAssist",
     extra:
       "https://docs.google.com/presentation/d/1hm6m8ilYLwCuvlFCgRplh7UrmUc5W0yL5VoxtQLJvN4/edit?usp=sharing",
@@ -34,24 +58,7 @@ export const projects: Project[] = [
     tech: ["Flask", "Python", "SQL", "JavaScript"],
     image: "/images/projects/smallgym_thumbnail.png",
     category: "apps",
-  },
-  {
-    id: "neurotype",
-    title: "Neurotype",
-    subtitle: "iOS & Android App",
-    description: "A neurodivergent-focused application.",
-    tech: ["React Native", "TypeScript", "Supabase"],
-    image: "/images/projects/aviaassist_thumbnail.png",
-    category: "apps",
-  },
-  {
-    id: "volo",
-    title: "Volo",
-    subtitle: "iOS & Android App",
-    description: "A pilot-focused application.",
-    tech: ["React Native", "TypeScript", "Supabase"],
-    image: "/images/projects/aviaassist_thumbnail.png",
-    category: "apps",
+    status: "live",
   },
   {
     id: "launchspace",
@@ -62,27 +69,30 @@ export const projects: Project[] = [
     tech: ["React", "TypeScript", "Node.js", "Vercel"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "web",
+    status: "live",
     github: "https://github.com/UzayPoyrza/LaunchSpace",
     live: "https://launchspace.org",
   },
   {
     id: "neurotype-web",
     title: "Neurotype Website",
-    subtitle: "",
+    subtitle: "Landing Page",
     description: "Website for Neurotype, a neurodivergent-focused application.",
     tech: ["React", "TypeScript", "Vercel"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "web",
+    status: "live",
     live: "https://neurotypeapp.com",
   },
   {
     id: "volo-web",
     title: "Volo Website",
-    subtitle: "",
+    subtitle: "Landing Page",
     description: "Website for Volo, a pilot-focused application.",
     tech: ["React", "TypeScript", "Vercel"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "web",
+    status: "live",
     live: "https://volopilot.app",
   },
   {
@@ -93,6 +103,7 @@ export const projects: Project[] = [
     tech: ["React", "TypeScript", "Vercel"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "web",
+    status: "dev",
     live: "https://myro.coach",
   },
   {
@@ -104,6 +115,7 @@ export const projects: Project[] = [
     tech: ["Python", "Q-Learning", "Alpha-Beta Pruning"],
     image: "/images/projects/checkers.png",
     category: "ai",
+    status: "live",
     github: "https://github.com/UzayPoyrza/checker-RL",
   },
 ];
