@@ -38,7 +38,7 @@ export default function WaveformVisualizer({
         analyser.getByteTimeDomainData(dataArray);
 
         ctx.lineWidth = 2;
-        ctx.strokeStyle = "#c45d3e";
+        ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#c45d3e";
         ctx.beginPath();
 
         const sliceWidth = w / bufferLength;
@@ -54,7 +54,7 @@ export default function WaveformVisualizer({
         ctx.stroke();
       } else {
         // Idle state — flat line with subtle pulse
-        ctx.strokeStyle = "#2a2a2a";
+        ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--border").trim() || "#2a2a2a";
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(0, h / 2);
