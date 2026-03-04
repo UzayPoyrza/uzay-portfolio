@@ -181,7 +181,7 @@ export default function Home() {
               shipping in minutes what used to take weeks is genuinely unreasonable.
               I&apos;m currently building two apps under my company{" "}
               <span className="text-text">LaunchSpace</span> and they&apos;re about to
-              publish very very soon — not touching grass until they do.
+              publish very very soon - not touching grass until they do.
               After that, I&apos;d love to bring this energy to a team
               where shipping quality product fast actually matters.
             </motion.p>

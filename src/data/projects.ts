@@ -30,8 +30,8 @@ export const projects: Project[] = [
   {
     id: "volo",
     title: "Volo",
-    subtitle: "AviaAssist reborn — more features, more useful, more pilots involved, built with and integrated AI",
-    description: "AviaAssist was loved by pilots but never hit production — so we went bigger. Volo is the full rebuild with AI baked in, more features, and more pilots involved. We also set up ClawBot, a WhatsApp-based pilot assistant, with one of the original pilots. Insane experience, launching soon.",
+    subtitle: "AviaAssist reborn  - more features, more useful, more pilots involved, built with and integrated AI",
+    description: "AviaAssist was loved by pilots but never hit production  - so we went bigger. Volo is the full rebuild with AI baked in, more features, and more pilots involved. We also set up OpenClaw, a WhatsApp-based pilot assistant, directly with one of the pilots. Insane experience, launching soon.",
     tech: ["React Native", "TypeScript", "Supabase"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "apps",
@@ -57,7 +57,7 @@ export const projects: Project[] = [
     title: "Gym Booking App",
     subtitle: "Solving Gym Overcrowding",
     description:
-      "My first real project — built at UWC ISAK Japan during COVID to solve gym overcrowding. Full-stack booking system with scheduling, live availability, and an admin panel. Rough around the edges, but it worked and people used it. Here for historic value.",
+      "My first real project  - built at UWC ISAK Japan during COVID to solve gym overcrowding. Full-stack booking system with scheduling, live availability, and an admin panel. Rough around the edges, but it worked and people used it. Here for historic value.",
     tech: ["Flask", "Python", "SQL", "JavaScript"],
     image: "/images/projects/smallgym_thumbnail.png",
     category: "apps",
