@@ -104,7 +104,7 @@ export const projects: Project[] = [
     id: "myro",
     title: "Myro",
     subtitle: "Competitive Programming Coach",
-    description: "Primarily CLI-based. Passion project with a PhD friend from Princeton and UC Riverside. Goal is to make you red in Codeforces - a problem that takes 40 mins to solve, Myro guides you through the key observations in 15 without giving it away.",
+    description: "Primarily CLI-based. Passion project with a PhD friend from Princeton and UC Riverside. Goal is to make you red in Codeforces in the shortest time possible - a problem that takes 40 mins to solve, Myro guides you through the key observations in 15 without giving it away.",
     tech: ["Rust", "LLMs", "CLI"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "web",
