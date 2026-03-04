@@ -45,9 +45,8 @@ export default function Home() {
       `}</style>
 
       {/* ---- MOBILE TOP NAV (fixed) ---- */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between border-b border-border/50 bg-bg/80 px-6 py-3 backdrop-blur-md md:hidden">
-        <a href="#" className="font-serif text-lg tracking-tight">Uzay Poyraz</a>
-        <ul className="flex gap-5">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center border-b border-border/50 bg-bg/80 px-6 py-3 backdrop-blur-md md:hidden">
+        <ul className="flex gap-6">
           {navLinks.map((link) => {
             const isActive = activeSection === link.href.slice(1);
             return (
