@@ -12,6 +12,7 @@ export interface Project {
   github?: string;
   live?: string;
   extra?: string;
+  demo?: string;
 }
 
 export const projects: Project[] = [
@@ -24,6 +25,7 @@ export const projects: Project[] = [
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "apps",
     status: "dev",
+    github: "https://github.com/UzayPoyrza/Neurotype",
   },
   {
     id: "volo",
@@ -48,6 +50,7 @@ export const projects: Project[] = [
     github: "https://github.com/aydaruya/AviaAssist",
     extra:
       "https://docs.google.com/presentation/d/1hm6m8ilYLwCuvlFCgRplh7UrmUc5W0yL5VoxtQLJvN4/edit?usp=sharing",
+    demo: "https://www.youtube.com/embed/WBDuho0EyIU",
   },
   {
     id: "gym-booking",
@@ -59,6 +62,7 @@ export const projects: Project[] = [
     image: "/images/projects/smallgym_thumbnail.png",
     category: "apps",
     status: "live",
+    demo: "https://www.youtube.com/embed/b22Ctlpv0ac",
   },
   {
     id: "launchspace",
@@ -82,6 +86,7 @@ export const projects: Project[] = [
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "web",
     status: "live",
+    github: "https://github.com/UzayPoyrza/Neurotype-Website",
     live: "https://neurotypeapp.com",
   },
   {
@@ -93,6 +98,7 @@ export const projects: Project[] = [
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "web",
     status: "live",
+    github: "https://github.com/UzayPoyrza/volo-website",
     live: "https://volopilot.app",
   },
   {

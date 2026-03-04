@@ -226,7 +226,7 @@ export default function Home() {
                               <polyline points="6 9 12 15 18 9" />
                             </motion.svg>
                           </div>
-                          {(project.github || project.live) && (
+                          {(project.github || project.live || project.id === "checkers-ai") && (
                             <div className="mt-2 flex gap-3">
                               {project.github && (
                                 <a
@@ -250,6 +250,19 @@ export default function Home() {
                                   Live Site
                                 </a>
                               )}
+                              {project.id === "checkers-ai" && (
+                                <a
+                                  href="#checkers-demo"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    document.getElementById("checkers-demo")?.scrollIntoView({ behavior: "smooth" });
+                                  }}
+                                  className="text-xs text-accent transition-colors hover:text-accent-hover"
+                                >
+                                  Try Demo
+                                </a>
+                              )}
                             </div>
                           )}
                           <AnimatePresence>
@@ -269,6 +282,17 @@ export default function Home() {
                                     </span>
                                   ))}
                                 </div>
+                                {project.demo && (
+                                  <div className="mt-3 aspect-video w-full overflow-hidden rounded">
+                                    <iframe
+                                      src={project.demo}
+                                      title={`${project.title} demo`}
+                                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                      allowFullScreen
+                                      className="h-full w-full"
+                                    />
+                                  </div>
+                                )}
                               </motion.div>
                             )}
                           </AnimatePresence>
@@ -297,7 +321,7 @@ export default function Home() {
             </motion.p>
             <motion.div {...fadeUp(3.0)} className="space-y-6">
               <MeditationDemo />
-              <CheckersDemo />
+              <div id="checkers-demo"><CheckersDemo /></div>
             </motion.div>
           </section>
 
