@@ -22,11 +22,10 @@ const fadeUp = (delay = 0) => ({
 const navLinks = [
   { label: "ABOUT", href: "#about" },
   { label: "PROJECTS", href: "#projects" },
-  { label: "DEMOS", href: "#demos" },
   { label: "EXPERIENCE", href: "#experience" },
 ];
 
-const sectionIds = ["about", "projects", "demos", "experience"];
+const sectionIds = ["about", "projects", "experience"];
 
 export default function Home() {
   const { theme, toggle } = useTheme();
@@ -204,7 +203,7 @@ export default function Home() {
               try it yourself
             </motion.h2>
             <motion.p {...fadeUp(3.0)} className="mb-8 text-sm text-text-muted">
-              demos you can actually interact with
+              go ahead, poke around
             </motion.p>
             <motion.div {...fadeUp(3.0)} className="space-y-6">
               <MeditationDemo />

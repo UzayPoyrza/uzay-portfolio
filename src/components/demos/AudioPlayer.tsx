@@ -58,24 +58,15 @@ export default function AudioPlayer({
     <div className={borderless ? "" : "border border-border p-6 transition-colors hover:border-accent/30"}>
       <div className="mb-4 flex items-start justify-between">
         <div>
-          <h4 className="font-serif text-xl">{title}</h4>
-          <p className="mt-1 text-sm text-text-muted">{description}</p>
+          {title && <h4 className="font-serif text-xl">{title}</h4>}
+          <p className={`text-sm text-text-muted${title ? " mt-1" : ""}`}>{description}</p>
         </div>
         {hasAudio ? (
           <button
             onClick={toggle}
-            className="flex h-10 w-10 shrink-0 items-center justify-center border border-accent text-accent transition-colors hover:bg-accent hover:text-bg"
+            className="shrink-0 border border-accent px-3 py-1.5 font-mono text-xs text-accent transition-colors hover:bg-accent hover:text-bg"
           >
-            {isPlaying ? (
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
-                <rect x="2" y="1" width="3" height="12" />
-                <rect x="9" y="1" width="3" height="12" />
-              </svg>
-            ) : (
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
-                <polygon points="2,1 12,7 2,13" />
-              </svg>
-            )}
+            {isPlaying ? "pause" : "click to play demo"}
           </button>
         ) : (
           <span className="shrink-0 border border-border px-3 py-1.5 text-xs text-text-muted">
