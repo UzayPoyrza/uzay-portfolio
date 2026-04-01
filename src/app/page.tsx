@@ -103,7 +103,7 @@ export default function Home() {
       {/* ---- LEFT SIDEBAR (fixed on desktop) ---- */}
       <header
         className="sidebar-header px-6 pt-16 md:fixed md:top-0 md:flex md:h-screen md:w-[340px] md:flex-col md:justify-between md:py-20 md:pt-20 lg:w-[400px]"
-        style={{ left: 'max(3rem, calc((100vw - 1280px) / 2 + 6rem))' }}
+        style={{ left: 'max(1.5rem, calc((100vw - 1280px) / 2 + 1.5rem))' }}
       >
         <div>
             <motion.h1
@@ -185,9 +185,9 @@ export default function Home() {
       {/* ---- RIGHT CONTENT (only this scrolls) ---- */}
       <main
         className="content-main px-6 pb-12 md:pb-20 md:pl-12 md:pr-6 lg:pl-20 lg:pr-12"
-        style={{ marginLeft: 'max(calc(340px + 6rem), calc((100vw - 1280px) / 2 + 6rem + 400px + 5rem))' }}
+        style={{ marginLeft: 'max(calc(340px - 2rem), calc((100vw - 1280px) / 2 + 1.5rem + 400px - 4rem))' }}
       >
-        <div className="max-w-2xl md:pt-20">
+        <div className="max-w-4xl md:pt-20">
 
           {/* About */}
           <section id="about" className="mb-24">
