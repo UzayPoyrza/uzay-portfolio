@@ -178,7 +178,7 @@ function PhoneShowcase({ screenshots, title }: { screenshots: string[]; title: s
 
   return (
     <div
-      className="relative flex h-[360px] items-center justify-center md:h-[420px]"
+      className="relative flex h-[360px] items-center justify-center phone-showcase md:h-[420px]"
       style={{ perspective: "1500px" }}
       onMouseLeave={() => setHovered(null)}
     >
@@ -576,6 +576,9 @@ export default function Home() {
         @media (max-width: 767px) {
           .sidebar-header { left: auto !important; position: static !important; }
           .content-main { margin-left: 0 !important; }
+        }
+        @media (min-width: 1024px) and (max-width: 1129px) {
+          .phone-showcase { transform: scale(0.78); transform-origin: center; }
         }
       `}</style>
 
