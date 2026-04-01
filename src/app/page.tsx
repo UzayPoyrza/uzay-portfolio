@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import CustomCursor from "@/components/layout/CustomCursor";
 import LoadingScreen from "@/components/layout/LoadingScreen";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { personal } from "@/data/personal";
-import { projects, projectCategories } from "@/data/projects";
+import { projects, type ProjectStatus } from "@/data/projects";
 import { skillCategories } from "@/data/skills";
 import { timeline } from "@/data/experience";
 import MeditationDemo from "@/components/demos/MeditationDemo";
@@ -28,10 +29,535 @@ const navLinks = [
 
 const sectionIds = ["about", "projects", "experience"];
 
+const typeLabels: Record<string, string> = {
+  apps: "Mobile App",
+  web: "Website",
+  ai: "AI / ML",
+};
+
+const statusConfig: Record<ProjectStatus, { dot: string; label: string }> = {
+  live: { dot: "bg-green-500", label: "Live" },
+  dev: { dot: "bg-yellow-500", label: "In Dev" },
+  discontinued: { dot: "bg-red-500", label: "Archived" },
+};
+
+const projectScreenshots: Record<string, string[]> = {
+  aviaassist: ["/images/projects/avia_ss1.png", "/images/projects/avia_ss2.png", "/images/projects/aviaassist_thumbnail.png"],
+  "gym-booking": ["/images/projects/smallgym_thumbnail.png"],
+  "checkers-ai": ["/images/projects/checkers.png"],
+};
+
+const ease = [0.16, 1, 0.3, 1] as [number, number, number, number];
+
+/* Group related app + website projects together */
+const websitePairs: Record<string, string> = {
+  neurotype: "neurotype-web",
+  volo: "volo-web",
+};
+const pairedWebsiteIds = new Set(Object.values(websitePairs));
+
+interface ProjectGroup {
+  primary: (typeof projects)[number];
+  website?: (typeof projects)[number];
+}
+
+const projectGroups: ProjectGroup[] = projects
+  .filter((p) => !pairedWebsiteIds.has(p.id))
+  .map((p) => ({
+    primary: p,
+    website: websitePairs[p.id]
+      ? projects.find((w) => w.id === websitePairs[p.id])
+      : undefined,
+  }));
+
+/* ── Phone Mockup (realistic iPhone with side buttons) ── */
+function PhoneMockup({ screenshots, title, showDots = true }: { screenshots: string[]; title: string; showDots?: boolean }) {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    if (screenshots.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % screenshots.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [screenshots.length]);
+
+  return (
+    <div className="relative w-[180px] shrink-0 md:w-[210px]">
+      {/* Side buttons */}
+      <div className="absolute -left-[3px] top-[55px] h-[22px] w-[3px] rounded-l bg-border/50" />
+      <div className="absolute -left-[3px] top-[85px] h-[34px] w-[3px] rounded-l bg-border/50" />
+      <div className="absolute -left-[3px] top-[127px] h-[34px] w-[3px] rounded-l bg-border/50" />
+      <div className="absolute -right-[3px] top-[105px] h-[48px] w-[3px] rounded-r bg-border/50" />
+
+      {/* Frame */}
+      <div className="relative overflow-hidden rounded-[32px] border-[3px] border-border/30 bg-[#1a1a1a] p-1.5 shadow-2xl shadow-black/40">
+        {/* Dynamic Island */}
+        <div className="absolute left-1/2 top-2.5 z-20 h-[16px] w-[60px] -translate-x-1/2 rounded-full bg-[#1a1a1a]" />
+
+        {/* Screen */}
+        <div className="relative aspect-[9/19.5] overflow-hidden rounded-[24px] bg-bg-elevated">
+          {screenshots.length > 0 ? (
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={current}
+                initial={{ opacity: 0, scale: 1.05 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.8, ease }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src={screenshots[current]}
+                  alt={`${title} screen ${current + 1}`}
+                  fill
+                  className="object-cover"
+                  sizes="210px"
+                />
+              </motion.div>
+            </AnimatePresence>
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center gap-2 bg-gradient-to-b from-accent/5 to-bg-elevated">
+              <span className="font-serif text-5xl text-text/[0.08]">{title.charAt(0)}</span>
+              <span className="font-mono text-[8px] text-text-muted/30">coming soon</span>
+            </div>
+          )}
+        </div>
+
+        {/* Home Indicator */}
+        <div className="absolute bottom-1 left-1/2 h-[3px] w-16 -translate-x-1/2 rounded-full bg-white/20" />
+      </div>
+
+      {/* Dots */}
+      {showDots && screenshots.length > 1 && (
+        <div className="mt-3 flex justify-center gap-1.5">
+          {screenshots.map((_, i) => (
+            <div
+              key={i}
+              className={`h-1 rounded-full transition-all duration-500 ${
+                i === current ? "w-3 bg-accent" : "w-1 bg-text-muted/30"
+              }`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Phone Showcase (3 phones fanned out with hover interactions) ── */
+function PhoneShowcase({ screenshots, title }: { screenshots: string[]; title: string }) {
+  const [hovered, setHovered] = useState<number | null>(null);
+
+  const phones = [
+    {
+      screenshots: screenshots[1] ? [screenshots[1]] : screenshots[0] ? [screenshots[0]] : [],
+      x: -75,
+      rotate: -8,
+      baseScale: 0.85,
+      z: 1,
+      delay: 0.15,
+    },
+    {
+      screenshots: screenshots,
+      x: 0,
+      rotate: 0,
+      baseScale: 1,
+      z: 10,
+      delay: 0,
+    },
+    {
+      screenshots: screenshots[2] ? [screenshots[2]] : screenshots[0] ? [screenshots[0]] : [],
+      x: 75,
+      rotate: 8,
+      baseScale: 0.85,
+      z: 1,
+      delay: 0.2,
+    },
+  ];
+
+  return (
+    <div
+      className="relative flex h-[360px] items-center justify-center md:h-[420px]"
+      style={{ perspective: "1500px" }}
+      onMouseLeave={() => setHovered(null)}
+    >
+      {phones.map((phone, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          style={{ zIndex: hovered === i ? 20 : phone.z }}
+          initial={{ opacity: 0, y: 60, x: 0, rotate: 0 }}
+          animate={{
+            opacity: hovered !== null && hovered !== i ? 0.6 : 1,
+            y: 0,
+            x: phone.x,
+            rotate: hovered === i ? 0 : phone.rotate,
+            scale: hovered === i ? 1.1 : phone.baseScale,
+          }}
+          transition={{
+            duration: 0.5,
+            ease,
+            opacity: { duration: 0.3 },
+            y: { delay: phone.delay, duration: 0.7 },
+            x: { delay: phone.delay, duration: 0.7 },
+          }}
+          onMouseEnter={() => setHovered(i)}
+        >
+          <PhoneMockup screenshots={phone.screenshots} title={title} showDots={false} />
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+/* ── Web Mockup (monitor-style) ── */
+function WebMockup({ screenshot, title, url }: { screenshot: string | null; title: string; url?: string }) {
+  return (
+    <div className="w-full">
+      {/* Screen */}
+      <div className="overflow-hidden rounded-lg border-2 border-border/40 bg-[#1a1a1a] shadow-2xl shadow-black/30">
+        {/* Tab bar */}
+        <div className="flex items-center gap-2 border-b border-white/5 px-3 py-1.5">
+          <div className="flex gap-1.5">
+            <div className="h-2 w-2 rounded-full bg-red-500/50" />
+            <div className="h-2 w-2 rounded-full bg-yellow-500/50" />
+            <div className="h-2 w-2 rounded-full bg-green-500/50" />
+          </div>
+          {url && (
+            <div className="ml-3 flex-1 rounded bg-white/5 px-3 py-0.5">
+              <span className="font-mono text-[9px] text-text-muted/30">{url}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Viewport */}
+        <div className="relative aspect-[16/9] bg-bg-elevated">
+          {screenshot ? (
+            <Image src={screenshot} alt={title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-accent/5 to-bg-elevated">
+              <span className="font-serif text-6xl text-text/[0.06]">{title.charAt(0)}</span>
+              <span className="font-mono text-[9px] text-text-muted/30">coming soon</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Stand */}
+      <div className="mx-auto h-4 w-16 rounded-b-lg border-x-2 border-b-2 border-border/30 bg-[#1a1a1a]" />
+      <div className="mx-auto h-1 w-24 rounded-b border-x border-b border-border/20 bg-border/10" />
+    </div>
+  );
+}
+
+/* ── Web Showcase (auto-cycling browser with arrows & dots) ── */
+function WebShowcase({ screenshot, title, url }: { screenshot: string | null; title: string; url?: string }) {
+  const [current, setCurrent] = useState(0);
+  const [hovered, setHovered] = useState(false);
+  const [direction, setDirection] = useState(1);
+
+  const pages = [
+    { label: "Home", path: "" },
+    { label: "About", path: "/about" },
+    { label: "Features", path: "/features" },
+  ];
+
+  // Auto-cycle
+  useEffect(() => {
+    if (hovered) return;
+    const timer = setInterval(() => {
+      setDirection(1);
+      setCurrent((prev) => (prev + 1) % pages.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [hovered, pages.length]);
+
+  const go = (dir: number) => {
+    setDirection(dir);
+    setCurrent((prev) => (prev + dir + pages.length) % pages.length);
+  };
+
+  const pageUrl = url ? `${url}${pages[current].path}` : undefined;
+  const angle = (title.charCodeAt(0) * 47 + current * 90) % 360;
+
+  const slideVariants = {
+    enter: (d: number) => ({ x: d > 0 ? "100%" : "-100%", opacity: 0 }),
+    center: { x: "0%", opacity: 1 },
+    exit: (d: number) => ({ x: d > 0 ? "-100%" : "100%", opacity: 0 }),
+  };
+
+  return (
+    <div className="w-full">
+      <div
+        className="overflow-hidden rounded-xl border border-border/40 bg-[#1a1a1a] shadow-2xl shadow-black/30"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        {/* Chrome bar */}
+        <div className="flex items-center border-b border-white/5 px-3 py-1.5">
+          <div className="flex gap-1.5">
+            <div className="h-2 w-2 rounded-full bg-red-500/50" />
+            <div className="h-2 w-2 rounded-full bg-yellow-500/50" />
+            <div className="h-2 w-2 rounded-full bg-green-500/50" />
+          </div>
+          {pageUrl && (
+            <div className="ml-3 flex-1 rounded bg-white/5 px-3 py-0.5">
+              <span className="font-mono text-[9px] text-text-muted/30">{pageUrl}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Page content with arrows */}
+        <div className="relative aspect-[4/3] overflow-hidden bg-bg-elevated md:aspect-[16/10]">
+          <AnimatePresence initial={false} custom={direction}>
+            <motion.div
+              key={current}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.5, ease }}
+              className="absolute inset-0"
+            >
+              {screenshot && current === 0 ? (
+                <Image
+                  src={screenshot}
+                  alt={`${title} ${pages[current].label}`}
+                  fill
+                  className="object-cover object-top"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              ) : (
+                <div
+                  className="flex h-full flex-col items-center justify-center gap-2"
+                  style={{ background: `linear-gradient(${angle}deg, var(--bg-elevated), var(--border))` }}
+                >
+                  <span className="font-serif text-6xl text-text/[0.06]">{title.charAt(0)}</span>
+                  <span className="font-mono text-[9px] text-text-muted/30">{pages[current].label}</span>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Arrows — always visible */}
+          <button
+            onClick={() => go(-1)}
+            className="absolute left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-bg/60 text-text-muted backdrop-blur-sm transition-all hover:bg-accent hover:text-bg"
+            aria-label="Previous page"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+          </button>
+          <button
+            onClick={() => go(1)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-bg/60 text-text-muted backdrop-blur-sm transition-all hover:bg-accent hover:text-bg"
+            aria-label="Next page"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+          </button>
+
+          {/* Page label */}
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-bg/60 px-3 py-1 backdrop-blur-sm">
+            <span className="font-mono text-[10px] text-text-muted">{pages[current].label}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Dots + stand */}
+      <div className="mt-3 flex justify-center gap-1.5">
+        {pages.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => { setDirection(i > current ? 1 : -1); setCurrent(i); }}
+            className={`h-1.5 rounded-full transition-all duration-300 ${
+              i === current ? "w-5 bg-accent" : "w-1.5 bg-text-muted/30 hover:bg-text-muted/50"
+            }`}
+            aria-label={`Go to ${pages[i].label}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── Project Showcase (full-width row) ── */
+function ProjectShowcase({ project, website, index }: { project: (typeof projects)[number]; website?: (typeof projects)[number]; index: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const [view, setView] = useState<"app" | "web">("app");
+  const isEven = index % 2 === 0;
+  const isMobile = project.category === "apps";
+  const type = typeLabels[project.category] || project.category;
+  const status = statusConfig[project.status];
+  const screenshots = projectScreenshots[project.id] || [];
+  const showingWeb = view === "web" && website;
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 60 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.8, delay: 0.1, ease }}
+      className="group overflow-hidden rounded-2xl border border-border/30 bg-bg-elevated/10 p-6 transition-colors duration-300 hover:border-accent/15 hover:bg-bg-elevated/20 md:p-8"
+    >
+      <div
+        className={`flex flex-col gap-8 lg:flex-row lg:items-center ${
+          !isEven ? "lg:flex-row-reverse" : ""
+        }`}
+      >
+        {/* Text side */}
+        <div className="w-full shrink-0 space-y-3 lg:w-[280px]">
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-[10px] font-medium uppercase tracking-[0.15em] text-accent">
+              {showingWeb ? "Website" : type}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className={`h-1.5 w-1.5 rounded-full ${status.dot}`} />
+              <span className="text-[10px] text-text-muted">{status.label}</span>
+            </span>
+          </div>
+
+          <h3 className="font-serif text-2xl tracking-tight text-text transition-colors group-hover:text-accent md:text-3xl">
+            {project.title}
+          </h3>
+
+          {project.subtitle && (
+            <p className="text-sm text-text-muted">{project.subtitle}</p>
+          )}
+
+          {project.description && (
+            <p className="text-sm leading-relaxed text-text-muted/70">
+              {project.description}
+            </p>
+          )}
+
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            {project.tech.map((t) => (
+              <span key={t} className="rounded border border-text/10 px-1.5 py-0.5 font-mono text-[10px] text-text-muted/60">
+                {t}
+              </span>
+            ))}
+          </div>
+
+          {(project.github || project.live || website?.live || project.id === "checkers-ai") && (
+            <div className="flex gap-4 pt-2">
+              {project.github && (
+                <a href={project.github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-text-muted transition-colors hover:text-accent">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                  GitHub
+                </a>
+              )}
+              {project.live && (
+                <a href={project.live} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-text-muted transition-colors hover:text-accent">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                  App Store
+                </a>
+              )}
+              {website?.live && (
+                <a href={website.live} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-text-muted transition-colors hover:text-accent">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3.5 1.5h7v7M10 2L2 10"/></svg>
+                  {website.live.replace("https://", "")}
+                </a>
+              )}
+              {project.id === "checkers-ai" && (
+                <a href="#checkers-demo" onClick={(e) => { e.preventDefault(); document.getElementById("checkers-demo")?.scrollIntoView({ behavior: "smooth" }); }} className="flex items-center gap-1.5 text-xs text-text-muted transition-colors hover:text-accent">
+                  Try Demo
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Device mockup side */}
+        <motion.div
+          initial={{ opacity: 0, x: isEven ? 60 : -60 }}
+          animate={inView ? { opacity: 1, x: 0 } : {}}
+          transition={{ duration: 0.9, delay: 0.25, ease }}
+          className="flex flex-1 flex-col items-center gap-4"
+        >
+          {/* Device toggle */}
+          {website && isMobile && (
+            <div className="inline-flex rounded-lg border border-border/40 p-0.5">
+              <button
+                onClick={() => setView("app")}
+                className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[11px] font-medium transition-all duration-200 ${
+                  view === "app"
+                    ? "bg-accent text-bg"
+                    : "text-text-muted hover:text-text"
+                }`}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                  <line x1="12" y1="18" x2="12.01" y2="18" />
+                </svg>
+                App
+              </button>
+              <button
+                onClick={() => setView("web")}
+                className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[11px] font-medium transition-all duration-200 ${
+                  view === "web"
+                    ? "bg-accent text-bg"
+                    : "text-text-muted hover:text-text"
+                }`}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                  <line x1="8" y1="21" x2="16" y2="21" />
+                  <line x1="12" y1="17" x2="12" y2="21" />
+                </svg>
+                Website
+              </button>
+            </div>
+          )}
+
+          {/* Mockup with transition */}
+          <AnimatePresence mode="wait">
+            {showingWeb ? (
+              <motion.div
+                key="web"
+                initial={{ opacity: 0, scale: 0.9, rotateY: -15 }}
+                animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+                exit={{ opacity: 0, scale: 0.9, rotateY: 15 }}
+                transition={{ duration: 0.5, ease }}
+                className="w-full"
+              >
+                <WebShowcase
+                  screenshot={null}
+                  title={website!.title}
+                  url={website!.live?.replace("https://", "")}
+                />
+              </motion.div>
+            ) : isMobile ? (
+              <motion.div
+                key="phones"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.4, ease }}
+                className="w-full"
+              >
+                <PhoneShowcase screenshots={screenshots} title={project.title} />
+              </motion.div>
+            ) : (
+              <motion.div key="web-only" className="w-full">
+                <WebShowcase
+                  screenshot={screenshots[0] || null}
+                  title={project.title}
+                  url={project.live?.replace("https://", "")}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function Home() {
   const { theme, toggle } = useTheme();
   const activeSection = useActiveSection(sectionIds);
-  const [expandedProject, setExpandedProject] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -228,120 +754,22 @@ export default function Home() {
             <motion.p {...fadeUp(2.8)} className="mb-8 text-sm text-text-muted">
               some shipped, some still cooking, some vibecoded, some not
             </motion.p>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-4">
-              {projectCategories.map((cat) => (
-                <motion.div key={cat.key} {...fadeUp(2.8)}>
-                  <h3 className="mb-4 border-b border-text/20 pb-2 font-serif text-lg tracking-wide text-text">{cat.label}</h3>
-                  <div className="space-y-3">
-                    {projects.filter((p) => p.category === cat.key).map((project) => {
-                      const isExpanded = expandedProject === project.id;
-                      return (
-                        <div
-                          key={project.id}
-                          onClick={() => setExpandedProject(isExpanded ? null : project.id)}
-                          className={`group cursor-pointer rounded-md border p-3 transition-all duration-200 hover:bg-bg-elevated ${
-                            project.status === "live" ? "border-green-500/50" :
-                            project.status === "dev" ? "border-yellow-500/50" :
-                            "border-red-500/50"
-                          }`}
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="min-w-0">
-                              <span className="font-serif text-base text-text transition-colors group-hover:text-accent">{project.title}</span>
-                              {project.subtitle && <p className="mt-0.5 text-[11px] text-text-muted">{project.subtitle}</p>}
-                            </div>
-                            <motion.svg
-                              animate={{ rotate: isExpanded ? 180 : 0 }}
-                              transition={{ duration: 0.2 }}
-                              width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                              className="mt-1 shrink-0 text-text-muted"
-                            >
-                              <polyline points="6 9 12 15 18 9" />
-                            </motion.svg>
-                          </div>
-                          {(project.github || project.live || project.id === "checkers-ai") && (
-                            <div className="mt-2 flex gap-3">
-                              {project.github && (
-                                <a
-                                  href={project.github}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  onClick={(e) => e.stopPropagation()}
-                                  className="text-xs text-accent transition-colors hover:text-accent-hover"
-                                >
-                                  GitHub
-                                </a>
-                              )}
-                              {project.live && (
-                                <a
-                                  href={project.live}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  onClick={(e) => e.stopPropagation()}
-                                  className="text-xs text-accent transition-colors hover:text-accent-hover"
-                                >
-                                  Live Site
-                                </a>
-                              )}
-                              {project.id === "checkers-ai" && (
-                                <a
-                                  href="#checkers-demo"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                    document.getElementById("checkers-demo")?.scrollIntoView({ behavior: "smooth" });
-                                  }}
-                                  className="text-xs text-accent transition-colors hover:text-accent-hover"
-                                >
-                                  Try Demo
-                                </a>
-                              )}
-                            </div>
-                          )}
-                          <AnimatePresence>
-                            {isExpanded && (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: "auto", opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.25, ease: "easeInOut" }}
-                                className="overflow-hidden"
-                              >
-                                <p className="mt-3 text-sm leading-relaxed text-text-muted">{project.description}</p>
-                                <div className="mt-3 flex flex-wrap gap-1.5">
-                                  {project.tech.map((t) => (
-                                    <span key={t} className="rounded border border-text/20 px-1.5 py-0.5 font-mono text-[10px] text-text-muted">
-                                      {t}
-                                    </span>
-                                  ))}
-                                </div>
-                                {project.demo && (
-                                  <div className="mt-3 aspect-video w-full overflow-hidden rounded">
-                                    <iframe
-                                      src={project.demo}
-                                      title={`${project.title} demo`}
-                                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                      allowFullScreen
-                                      className="h-full w-full"
-                                    />
-                                  </div>
-                                )}
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </motion.div>
+
+            <div className="space-y-8">
+              {projectGroups.map((group, i) => (
+                <ProjectShowcase key={group.primary.id} project={group.primary} website={group.website} index={i} />
               ))}
             </div>
-            <motion.div {...fadeUp(3.0)} className="mt-8 flex items-center justify-center gap-4 text-[11px] text-text-muted">
-              <span className="flex items-center gap-1.5"><span className="inline-block h-2 w-2 rounded-full bg-green-500" />live</span>
-              <span className="flex items-center gap-1.5"><span className="inline-block h-2 w-2 rounded-full bg-yellow-500" />in development</span>
-              <span className="flex items-center gap-1.5"><span className="inline-block h-2 w-2 rounded-full bg-red-500" />discontinued</span>
-            </motion.div>
 
+            <motion.div {...fadeUp(3.0)} className="mt-10 text-center">
+              <Link
+                href="/projects"
+                className="inline-flex items-center gap-2 text-sm text-accent transition-colors hover:text-accent-hover"
+              >
+                View all projects
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3.5 1.5h7v7M10 2L2 10"/></svg>
+              </Link>
+            </motion.div>
           </section>
 
           {/* Demos */}
