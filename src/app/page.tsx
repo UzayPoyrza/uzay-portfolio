@@ -125,15 +125,15 @@ function PhoneShowcase({ screenshots, title }: { screenshots: string[]; title: s
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
   const phones = [
-    { img: screenshots[1] ?? screenshots[0] ?? null, rotate: -8, x: -75, z: 1, w: 179, wHover: 240, delay: "0.15s" },
-    { img: screenshots[0] ?? null,                    rotate: 0,  x: 0,   z: 10, w: 210, wHover: 260, delay: "0s" },
-    { img: screenshots[2] ?? screenshots[0] ?? null, rotate: 8,  x: 75,  z: 1, w: 179, wHover: 240, delay: "0.2s" },
+    { img: screenshots[1] ?? screenshots[0] ?? null, rotate: -8, x: -62, z: 1, w: 150, wHover: 170, delay: "0.15s" },
+    { img: screenshots[0] ?? null,                    rotate: 0,  x: 0,   z: 10, w: 175, wHover: 195, delay: "0s" },
+    { img: screenshots[2] ?? screenshots[0] ?? null, rotate: 8,  x: 62,  z: 1, w: 150, wHover: 170, delay: "0.2s" },
   ];
 
   return (
     <div
       ref={ref}
-      className="relative h-[360px] phone-showcase md:h-[420px]"
+      className="relative h-[320px] phone-showcase md:h-[380px] overflow-visible"
       onMouseLeave={() => setHovered(null)}
     >
       {phones.map((phone, i) => {
@@ -145,7 +145,7 @@ function PhoneShowcase({ screenshots, title }: { screenshots: string[]; title: s
         return (
           <div
             key={i}
-            className="absolute inset-y-0 flex items-center"
+            className="absolute -inset-y-4 flex items-center"
             style={{
               left: `calc(50% + ${phone.x}px - ${currentW / 2}px)`,
               zIndex: isActive ? 20 : phone.z,
@@ -246,8 +246,6 @@ function WebShowcase({ screenshots, title, url }: { screenshots: string[]; title
     <div
       className="cursor-pointer"
       style={{
-        width: hovered ? "150%" : "100%",
-        marginLeft: hovered ? "-25%" : "0",
         transition: "width 0.5s cubic-bezier(0.16, 1, 0.3, 1), margin-left 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
       }}
       onMouseEnter={() => setHovered(true)}
@@ -263,19 +261,19 @@ function WebShowcase({ screenshots, title, url }: { screenshots: string[]; title
           </div>
           {pageUrl && (
             <div className="ml-3 flex-1 rounded bg-white/5 px-3 py-0.5">
-              <span className="font-mono text-[9px] text-text-muted/30">{pageUrl}</span>
+              <span className="font-mono text-[9px] text-white/70">{pageUrl}</span>
             </div>
           )}
         </div>
 
         {/* Page content — no transforms, just crossfade */}
-        <div className="relative aspect-[4/3] bg-bg-elevated md:aspect-[16/10]" style={{ clipPath: "inset(0 round 0 0 0.75rem 0.75rem)" }}>
+        <div className="relative aspect-[16/10] bg-bg-elevated" style={{ clipPath: "inset(0 round 0 0 0.75rem 0.75rem)" }}>
           {screenshots.map((src, i) => (
             <img
               key={i}
               src={src}
               alt={`${title} ${pages[i]?.label || ""}`}
-              className="absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-500"
+              className="absolute inset-0 h-full w-full object-contain object-top transition-opacity duration-500"
               style={{ opacity: i === current ? 1 : 0 }}
               draggable={false}
             />
@@ -305,10 +303,6 @@ function WebShowcase({ screenshots, title, url }: { screenshots: string[]; title
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
           </button>
 
-          {/* Page label */}
-          <div className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-full bg-bg/60 px-3 py-1 backdrop-blur-sm">
-            <span className="font-mono text-[10px] text-text-muted">{pages[current].label}</span>
-          </div>
         </div>
       </div>
 
@@ -330,105 +324,18 @@ function WebShowcase({ screenshots, title, url }: { screenshots: string[]; title
 }
 
 /* ── Terminal Showcase (CLI projects) ── */
-interface TerminalLine {
-  text: string;
-  prompt?: boolean;
-  accent?: boolean;
-  bold?: boolean;
-  dim?: boolean;
-}
-
-interface TerminalScreen {
-  label: string;
-  lines: TerminalLine[];
-}
-
-const terminalScreens: TerminalScreen[] = [
-  {
-    label: "startup",
-    lines: [
-      { text: "myro", prompt: true },
-      { text: "" },
-      { text: "  ┌──────────────────────────────────────┐", dim: true },
-      { text: "  │            myro v0.1.0               │", dim: true },
-      { text: "  │    competitive programming coach     │", dim: true },
-      { text: "  └──────────────────────────────────────┘", dim: true },
-      { text: "" },
-      { text: "  Fetching problem...", accent: true },
-      { text: "  CF-1842E  Tenzing and His Animal Friends", bold: true },
-      { text: "  Rating: 2200  |  Tags: graphs, greedy", dim: true },
-      { text: "" },
-      { text: "ready — press enter to begin ▊", prompt: true },
-    ],
-  },
-  {
-    label: "hint",
-    lines: [
-      { text: "myro solve", prompt: true },
-      { text: "" },
-      { text: "  ⏱  Timer started", dim: true },
-      { text: "" },
-      { text: "  Observation 1/3", accent: true },
-      { text: "  Think about what happens when you model" },
-      { text: "  friendships as edges in a graph." },
-      { text: "" },
-      { text: "  What property must the graph have for", dim: true },
-      { text: "  all animals to coexist in two groups?", dim: true },
-      { text: "" },
-      { text: "type your answer or enter for next hint ▊", prompt: true },
-    ],
-  },
-  {
-    label: "progress",
-    lines: [
-      { text: "myro stats", prompt: true },
-      { text: "" },
-      { text: "  Your Progress", accent: true },
-      { text: "  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", dim: true },
-      { text: "  Problems solved    47 / 200" },
-      { text: "  Current streak     12 days" },
-      { text: "  Avg solve time     18m → 14m  ↓", bold: true },
-      { text: "  Rating estimate    1847 → 1923", accent: true },
-      { text: "" },
-      { text: "  Weak topics: segment trees, dp on trees", dim: true },
-      { text: "  Next session: dp optimization", dim: true },
-      { text: "" },
-      { text: "▊", prompt: true },
-    ],
-  },
-];
 
 function TerminalShowcase({ title, castFile }: { title: string; castFile?: string }) {
-  const [current, setCurrent] = useState(0);
-  const [hovered, setHovered] = useState(false);
-  const [castFailed, setCastFailed] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
-
-  const showSimulated = !castFile || castFailed;
-
-  useEffect(() => {
-    if (!showSimulated || hovered) return;
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % terminalScreens.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, [hovered, showSimulated]);
-
-  const go = (dir: number) => {
-    setCurrent((prev) => (prev + dir + terminalScreens.length) % terminalScreens.length);
-  };
 
   return (
     <div
       ref={ref}
-      className="cursor-pointer"
       style={{
         opacity: inView ? 1 : 0,
         transition: "opacity 0.6s ease",
       }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
     >
       <div className="rounded-xl border border-border/40 bg-[#0d1117] shadow-2xl shadow-black/30">
         {/* Terminal chrome */}
@@ -443,79 +350,17 @@ function TerminalShowcase({ title, castFile }: { title: string; castFile?: strin
           </div>
         </div>
 
-        {/* Terminal content */}
-        {showSimulated ? (
-          <div className="relative min-h-[280px] md:min-h-[320px]">
-            {terminalScreens.map((screen, i) => (
-              <div
-                key={i}
-                className="absolute inset-0 p-4 font-mono text-[11px] leading-[1.7] transition-opacity duration-500 md:p-5 md:text-[12.5px]"
-                style={{ opacity: i === current ? 1 : 0, pointerEvents: i === current ? "auto" : "none" }}
-              >
-                {screen.lines.map((line, j) => (
-                  <div
-                    key={j}
-                    className={
-                      line.prompt
-                        ? "text-green-400/90"
-                        : line.accent
-                          ? "text-accent"
-                          : line.bold
-                            ? "text-text/90 font-medium"
-                            : line.dim
-                              ? "text-text-muted/40"
-                              : "text-text-muted/70"
-                    }
-                    style={{ minHeight: line.text === "" ? "1.2em" : undefined }}
-                  >
-                    {line.prompt && <span className="text-blue-400/60">❯ </span>}
-                    {line.text}
-                  </div>
-                ))}
-              </div>
-            ))}
-
-            {/* Arrows */}
-            <button
-              onClick={() => go(-1)}
-              className="absolute left-3 top-1/2 z-10 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-bg/60 text-text-muted backdrop-blur-sm transition-all hover:bg-accent hover:text-bg"
-              aria-label="Previous"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
-            </button>
-            <button
-              onClick={() => go(1)}
-              className="absolute right-3 top-1/2 z-10 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-bg/60 text-text-muted backdrop-blur-sm transition-all hover:bg-accent hover:text-bg"
-              aria-label="Next"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
-            </button>
+        {/* Player */}
+        {castFile ? (
+          <div className="terminal-player-wrapper">
+            <TerminalPlayer src={castFile} />
           </div>
         ) : (
-          <div className="min-h-[280px] md:min-h-[320px]">
-            <TerminalPlayer
-              src={castFile!}
-              onError={() => setCastFailed(true)}
-            />
+          <div className="flex min-h-[280px] items-center justify-center md:min-h-[320px]">
+            <span className="font-mono text-xs text-text-muted/40">recording coming soon</span>
           </div>
         )}
       </div>
-
-      {/* Dots (simulated mode only) */}
-      {showSimulated && (
-        <div className="mt-3 flex justify-center gap-1.5">
-          {terminalScreens.map((screen, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrent(i)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === current ? "w-5 bg-accent" : "w-1.5 bg-text-muted/30 hover:bg-text-muted/50"
-              }`}
-              aria-label={`Go to ${screen.label}`}
-            />
-          ))}
-        </div>
-      )}
     </div>
   );
 }
@@ -543,12 +388,18 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
       className="group rounded-2xl border border-border/30 bg-bg-elevated/10 p-6 transition-colors duration-300 hover:border-accent/15 hover:bg-bg-elevated/20 md:p-8"
     >
       <div
-        className={`flex flex-col gap-8 lg:flex-row lg:items-center ${
-          (!isMobile && !isTerminal) || !isEven ? "lg:flex-row-reverse" : ""
+        className={`flex flex-col gap-8 ${
+          isTerminal
+            ? `min-[1440px]:flex-row min-[1440px]:items-center ${!isEven ? "min-[1440px]:flex-row-reverse" : ""}`
+            : isMobile
+              ? `lg:flex-row lg:items-center ${!isEven ? "lg:flex-row-reverse" : ""}`
+              : `min-[1200px]:flex-row min-[1200px]:items-center ${!isEven ? "min-[1200px]:flex-row-reverse" : ""}`
         }`}
       >
         {/* Text side */}
-        <div className={`w-full shrink-0 space-y-3 ${isTerminal ? "lg:w-[340px]" : "lg:w-[280px]"}`}>
+        <div className={`w-full shrink-0 space-y-3 ${
+          isTerminal ? "min-[1440px]:w-[340px]" : isMobile ? "lg:w-[280px]" : "min-[1200px]:w-[300px]"
+        }`}>
           <div className="flex items-center gap-3">
             <span className="font-mono text-[10px] font-medium uppercase tracking-[0.15em] text-accent">
               {showingWeb ? "Website" : type}
@@ -610,7 +461,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.9, delay: 0.25, ease }}
           transformTemplate={({ x }) => x && x !== "0px" && x !== 0 ? `translateX(${x})` : "none"}
-          className={`flex flex-1 flex-col items-center gap-4 min-w-0 ${isTerminal ? "lg:max-w-[480px]" : "overflow-visible"}`}
+          className={`flex flex-1 flex-col items-center gap-4 min-w-0 ${isTerminal ? "" : "overflow-visible"}`}
         >
           {/* Device toggle */}
           {project.id === "incraft" && (
