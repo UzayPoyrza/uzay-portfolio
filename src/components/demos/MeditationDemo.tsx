@@ -41,6 +41,7 @@ function EmbeddedMeditationDemo() {
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const contextRef = useRef<AudioContext | null>(null);
+  const playingRef = useRef(false);
 
   const initAudio = useCallback(() => {
     if (contextRef.current) return;
@@ -54,18 +55,24 @@ function EmbeddedMeditationDemo() {
     audioRef.current = audio;
     contextRef.current = ctx;
     setAnalyser(analyserNode);
-    audio.addEventListener("ended", () => setIsPlaying(false));
+    audio.addEventListener("ended", () => {
+      playingRef.current = false;
+      setIsPlaying(false);
+    });
   }, []);
 
-  const toggle = () => {
+  const toggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
     initAudio();
     if (audioRef.current) {
-      if (isPlaying) {
+      if (playingRef.current) {
         audioRef.current.pause();
+        playingRef.current = false;
       } else {
         audioRef.current.play();
+        playingRef.current = true;
       }
-      setIsPlaying(!isPlaying);
+      setIsPlaying(playingRef.current);
     }
   };
 

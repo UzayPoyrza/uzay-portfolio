@@ -548,7 +548,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
         }`}
       >
         {/* Text side */}
-        <div className="w-full shrink-0 space-y-3 lg:w-[280px]">
+        <div className={`w-full shrink-0 space-y-3 ${isTerminal ? "lg:w-[340px]" : "lg:w-[280px]"}`}>
           <div className="flex items-center gap-3">
             <span className="font-mono text-[10px] font-medium uppercase tracking-[0.15em] text-accent">
               {showingWeb ? "Website" : type}
@@ -610,7 +610,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.9, delay: 0.25, ease }}
           transformTemplate={({ x }) => x && x !== "0px" && x !== 0 ? `translateX(${x})` : "none"}
-          className="flex flex-1 flex-col items-center gap-4 overflow-visible"
+          className={`flex flex-1 flex-col items-center gap-4 min-w-0 ${isTerminal ? "lg:max-w-[480px]" : "overflow-visible"}`}
         >
           {/* Device toggle */}
           {project.id === "incraft" && (
