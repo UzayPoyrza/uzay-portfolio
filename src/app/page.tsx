@@ -45,6 +45,7 @@ const projectScreenshots: Record<string, string[]> = {
   neurotype: ["/images/projects/neurotype_today.png", "/images/projects/neurotype_progress.png", "/images/projects/neurotype_session.png"],
   volo: ["/images/projects/volo_home.png", "/images/projects/volo_ops.png", "/images/projects/volo_nat.png"],
   "weather-time-widget": ["/images/projects/wtw_promo.png", "/images/projects/wtw_widgets.jpg", "/images/projects/wtw_settings.jpg"],
+  incraft: ["/images/projects/incraft_home.png", "/images/projects/incraft_create.png", "/images/projects/incraft_studio.png"],
   aviaassist: ["/images/projects/avia_ss1.png", "/images/projects/avia_ss2.png", "/images/projects/aviaassist_thumbnail.png"],
   "gym-booking": ["/images/projects/smallgym_thumbnail.png"],
   "checkers-ai": ["/images/projects/checkers.png"],
@@ -58,6 +59,7 @@ const websitePairs: Record<string, string> = {
   volo: "volo-web",
 };
 const pairedWebsiteIds = new Set(Object.values(websitePairs));
+const legacyProjectIds = new Set(["aviaassist", "gym-booking"]);
 
 interface ProjectGroup {
   primary: (typeof projects)[number];
@@ -65,7 +67,7 @@ interface ProjectGroup {
 }
 
 const projectGroups: ProjectGroup[] = projects
-  .filter((p) => !pairedWebsiteIds.has(p.id))
+  .filter((p) => !pairedWebsiteIds.has(p.id) && !legacyProjectIds.has(p.id))
   .map((p) => ({
     primary: p,
     website: websitePairs[p.id]
@@ -203,15 +205,15 @@ function WebMockup({ screenshot, title, url }: { screenshot: string | null; titl
 }
 
 /* ── Web Showcase (auto-cycling browser with arrows & dots) ── */
-function WebShowcase({ screenshot, title, url }: { screenshot: string | null; title: string; url?: string }) {
+function WebShowcase({ screenshots, title, url }: { screenshots: string[]; title: string; url?: string }) {
   const [current, setCurrent] = useState(0);
   const [hovered, setHovered] = useState(false);
   const [direction, setDirection] = useState(1);
 
   const pages = [
     { label: "Home", path: "" },
-    { label: "About", path: "/about" },
-    { label: "Features", path: "/features" },
+    { label: "Create", path: "/create" },
+    { label: "Studio", path: "/studio" },
   ];
 
   // Auto-cycle
@@ -232,19 +234,18 @@ function WebShowcase({ screenshot, title, url }: { screenshot: string | null; ti
   const pageUrl = url ? `${url}${pages[current].path}` : undefined;
   const angle = (title.charCodeAt(0) * 47 + current * 90) % 360;
 
-  const slideVariants = {
-    enter: (d: number) => ({ x: d > 0 ? "100%" : "-100%", opacity: 0 }),
-    center: { x: "0%", opacity: 1 },
-    exit: (d: number) => ({ x: d > 0 ? "-100%" : "100%", opacity: 0 }),
-  };
-
   return (
-    <div className="w-full">
-      <div
-        className="overflow-hidden rounded-xl border border-border/40 bg-[#1a1a1a] shadow-2xl shadow-black/30"
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-      >
+    <div
+      className="cursor-pointer"
+      style={{
+        width: hovered ? "150%" : "100%",
+        marginLeft: hovered ? "-25%" : "0",
+        transition: "width 0.5s cubic-bezier(0.16, 1, 0.3, 1), margin-left 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div className="rounded-xl border border-border/40 bg-[#1a1a1a] shadow-2xl shadow-black/30">
         {/* Chrome bar */}
         <div className="flex items-center border-b border-white/5 px-3 py-1.5">
           <div className="flex gap-1.5">
@@ -259,63 +260,51 @@ function WebShowcase({ screenshot, title, url }: { screenshot: string | null; ti
           )}
         </div>
 
-        {/* Page content with arrows */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-bg-elevated md:aspect-[16/10]">
-          <AnimatePresence initial={false} custom={direction}>
-            <motion.div
-              key={current}
-              custom={direction}
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.5, ease }}
-              className="absolute inset-0"
+        {/* Page content — no transforms, just crossfade */}
+        <div className="relative aspect-[4/3] bg-bg-elevated md:aspect-[16/10]" style={{ clipPath: "inset(0 round 0 0 0.75rem 0.75rem)" }}>
+          {screenshots.map((src, i) => (
+            <img
+              key={i}
+              src={src}
+              alt={`${title} ${pages[i]?.label || ""}`}
+              className="absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-500"
+              style={{ opacity: i === current ? 1 : 0 }}
+              draggable={false}
+            />
+          ))}
+          {screenshots.length === 0 && (
+            <div
+              className="flex h-full items-center justify-center"
+              style={{ background: `linear-gradient(${angle}deg, var(--bg-elevated), var(--border))` }}
             >
-              {screenshot && current === 0 ? (
-                <Image
-                  src={screenshot}
-                  alt={`${title} ${pages[current].label}`}
-                  fill
-                  className="object-cover object-top"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-              ) : (
-                <div
-                  className="flex h-full flex-col items-center justify-center gap-2"
-                  style={{ background: `linear-gradient(${angle}deg, var(--bg-elevated), var(--border))` }}
-                >
-                  <span className="font-serif text-6xl text-text/[0.06]">{title.charAt(0)}</span>
-                  <span className="font-mono text-[9px] text-text-muted/30">{pages[current].label}</span>
-                </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
+              <span className="font-serif text-6xl text-text/[0.06]">{title.charAt(0)}</span>
+            </div>
+          )}
 
-          {/* Arrows — always visible */}
+          {/* Arrows */}
           <button
             onClick={() => go(-1)}
-            className="absolute left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-bg/60 text-text-muted backdrop-blur-sm transition-all hover:bg-accent hover:text-bg"
+            className="absolute left-3 top-1/2 z-10 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-bg/60 text-text-muted backdrop-blur-sm transition-all hover:bg-accent hover:text-bg"
             aria-label="Previous page"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
           </button>
           <button
             onClick={() => go(1)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-bg/60 text-text-muted backdrop-blur-sm transition-all hover:bg-accent hover:text-bg"
+            className="absolute right-3 top-1/2 z-10 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-bg/60 text-text-muted backdrop-blur-sm transition-all hover:bg-accent hover:text-bg"
             aria-label="Next page"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
           </button>
 
           {/* Page label */}
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-bg/60 px-3 py-1 backdrop-blur-sm">
+          <div className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-full bg-bg/60 px-3 py-1 backdrop-blur-sm">
             <span className="font-mono text-[10px] text-text-muted">{pages[current].label}</span>
           </div>
         </div>
       </div>
 
-      {/* Dots + stand */}
+      {/* Dots */}
       <div className="mt-3 flex justify-center gap-1.5">
         {pages.map((_, i) => (
           <button
@@ -427,7 +416,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.9, delay: 0.25, ease }}
           transformTemplate={({ x }) => x && x !== "0px" && x !== 0 ? `translateX(${x})` : "none"}
-          className="flex flex-1 flex-col items-center gap-4"
+          className="flex flex-1 flex-col items-center gap-4 overflow-visible"
         >
           {/* Device toggle */}
           {website && isMobile && (
@@ -476,7 +465,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
                 className="w-full"
               >
                 <WebShowcase
-                  screenshot={null}
+                  screenshots={[]}
                   title={website!.title}
                   url={website!.live?.replace("https://", "")}
                 />
@@ -496,7 +485,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
             ) : (
               <motion.div key="web-only" className="w-full">
                 <WebShowcase
-                  screenshot={screenshots[0] || null}
+                  screenshots={screenshots}
                   title={project.title}
                   url={project.live?.replace("https://", "")}
                 />
@@ -513,6 +502,7 @@ export default function Home() {
   const { theme, toggle } = useTheme();
   const activeSection = useActiveSection(sectionIds);
   const [scrolled, setScrolled] = useState(false);
+  const [showLegacy, setShowLegacy] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -716,6 +706,80 @@ export default function Home() {
               {projectGroups.map((group, i) => (
                 <ProjectShowcase key={group.primary.id} project={group.primary} website={group.website} index={i} />
               ))}
+            </div>
+
+            {/* Legacy Projects */}
+            <div className="mt-12">
+              <button
+                onClick={() => setShowLegacy(!showLegacy)}
+                className="flex items-center gap-2 text-sm text-text-muted transition-colors hover:text-text"
+              >
+                <motion.svg
+                  animate={{ rotate: showLegacy ? 90 : 0 }}
+                  transition={{ duration: 0.2 }}
+                  width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                >
+                  <polyline points="9 18 15 12 9 6" />
+                </motion.svg>
+                legacy projects
+              </button>
+
+              <AnimatePresence>
+                {showLegacy && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    <div className="mt-6 grid grid-cols-2 gap-4">
+                      {projects.filter((p) => legacyProjectIds.has(p.id)).map((project) => {
+                        const screenshots = projectScreenshots[project.id] || [];
+                        const status = statusConfig[project.status];
+                        return (
+                          <div
+                            key={project.id}
+                            className="group rounded-xl border border-border/30 bg-bg-elevated/10 p-3 transition-colors duration-200 hover:border-accent/15 hover:bg-bg-elevated/20"
+                          >
+                            {screenshots[0] && (
+                              <img
+                                src={screenshots[0]}
+                                alt={project.title}
+                                className="mb-3 w-full rounded-lg"
+                                draggable={false}
+                              />
+                            )}
+                            <div className="flex items-center justify-between">
+                              <span className="font-mono text-[9px] font-medium uppercase tracking-[0.15em] text-accent">
+                                {typeLabels[project.category]}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <span className={`h-1.5 w-1.5 rounded-full ${status.dot}`} />
+                                <span className="text-[9px] text-text-muted">{status.label}</span>
+                              </span>
+                            </div>
+                            <h3 className="mt-1 font-serif text-base text-text transition-colors group-hover:text-accent">
+                              {project.title}
+                            </h3>
+                            <p className="mt-0.5 text-[11px] text-text-muted">{project.subtitle}</p>
+                            {(project.github || project.demo) && (
+                              <div className="mt-2 flex gap-3">
+                                {project.github && (
+                                  <a href={project.github} target="_blank" rel="noopener noreferrer" className="text-[11px] text-text-muted transition-colors hover:text-accent">GitHub</a>
+                                )}
+                                {project.demo && (
+                                  <a href={project.demo} target="_blank" rel="noopener noreferrer" className="text-[11px] text-text-muted transition-colors hover:text-accent">Demo</a>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             <motion.div {...fadeUp(3.0)} className="mt-10 text-center">

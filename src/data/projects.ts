@@ -111,6 +111,17 @@ export const projects: Project[] = [
     live: "https://volopilot.app",
   },
   {
+    id: "incraft",
+    title: "Incraft",
+    subtitle: "AI Guided Meditation Generator",
+    description: "Prompt-to-guided meditation generator with a custom studio for therapists, creators, and instructors. Users enter what they need, configure voice, duration, and protocol, and the app generates a personalized script via AI, pairs it with TTS audio and ambient soundscapes, and delivers a full playback experience. Freemium model with Stripe billing, deployed as a RESTful API on AWS Lambda with self-healing post-processing.",
+    tech: ["Next.js", "Stripe", "AWS Lambda", "ElevenLabs", "Supabase", "PostHog", "Python"],
+    image: "/images/projects/aviaassist_thumbnail.png",
+    category: "web",
+    status: "live",
+    live: "https://incraft.io",
+  },
+  {
     id: "myro",
     title: "Myro",
     subtitle: "Competitive Programming Coach",
