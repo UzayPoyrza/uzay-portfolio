@@ -42,6 +42,7 @@ const statusConfig: Record<ProjectStatus, { dot: string; label: string }> = {
 };
 
 const projectScreenshots: Record<string, string[]> = {
+  neurotype: ["/images/projects/neurotype_today.png", "/images/projects/neurotype_progress.png", "/images/projects/neurotype_session.png"],
   aviaassist: ["/images/projects/avia_ss1.png", "/images/projects/avia_ss2.png", "/images/projects/aviaassist_thumbnail.png"],
   "gym-booking": ["/images/projects/smallgym_thumbnail.png"],
   "checkers-ai": ["/images/projects/checkers.png"],
@@ -70,143 +71,91 @@ const projectGroups: ProjectGroup[] = projects
       : undefined,
   }));
 
-/* ── Phone Mockup (realistic iPhone with side buttons) ── */
-function PhoneMockup({ screenshots, title, showDots = true }: { screenshots: string[]; title: string; showDots?: boolean }) {
-  const [current, setCurrent] = useState(0);
-
-  useEffect(() => {
-    if (screenshots.length <= 1) return;
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % screenshots.length);
-    }, 3000);
-    return () => clearInterval(timer);
-  }, [screenshots.length]);
-
+/* ── Phone Mockup ── */
+/* Minimal layers. border-radius on img itself — no overflow-hidden, no clip-path, no compositing. */
+function PhoneMockup({ screenshot, title }: { screenshot: string | null; title: string }) {
+  const angle = (title.charCodeAt(0) * 47) % 360;
   return (
-    <div className="relative w-[180px] shrink-0 md:w-[210px]">
+    <div className="relative w-full">
       {/* Side buttons */}
-      <div className="absolute -left-[3px] top-[55px] h-[22px] w-[3px] rounded-l bg-border/50" />
-      <div className="absolute -left-[3px] top-[85px] h-[34px] w-[3px] rounded-l bg-border/50" />
-      <div className="absolute -left-[3px] top-[127px] h-[34px] w-[3px] rounded-l bg-border/50" />
-      <div className="absolute -right-[3px] top-[105px] h-[48px] w-[3px] rounded-r bg-border/50" />
+      <div className="absolute -left-[2px] top-[14%] h-[5%] w-[2px] rounded-l bg-border/40" />
+      <div className="absolute -left-[2px] top-[21%] h-[7.5%] w-[2px] rounded-l bg-border/40" />
+      <div className="absolute -left-[2px] top-[31%] h-[7.5%] w-[2px] rounded-l bg-border/40" />
+      <div className="absolute -right-[2px] top-[25%] h-[11%] w-[2px] rounded-r bg-border/40" />
 
       {/* Frame */}
-      <div className="relative overflow-hidden rounded-[32px] border-[3px] border-border/30 bg-[#1a1a1a] p-1.5 shadow-2xl shadow-black/40">
-        {/* Dynamic Island */}
-        <div className="absolute left-1/2 top-2.5 z-20 h-[16px] w-[60px] -translate-x-1/2 rounded-full bg-[#1a1a1a]" />
-
-        {/* Screen */}
-        <div className="relative aspect-[9/19.5] overflow-hidden rounded-[24px] bg-bg-elevated">
-          {screenshots.length > 0 ? (
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={current}
-                initial={{ opacity: 0, scale: 1.05 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.8, ease }}
-                className="absolute inset-0"
-              >
-                <Image
-                  src={screenshots[current]}
-                  alt={`${title} screen ${current + 1}`}
-                  fill
-                  className="object-cover"
-                  sizes="210px"
-                />
-              </motion.div>
-            </AnimatePresence>
-          ) : (
-            <div className="flex h-full flex-col items-center justify-center gap-2 bg-gradient-to-b from-accent/5 to-bg-elevated">
-              <span className="font-serif text-5xl text-text/[0.08]">{title.charAt(0)}</span>
-              <span className="font-mono text-[8px] text-text-muted/30">coming soon</span>
-            </div>
-          )}
-        </div>
-
-        {/* Home Indicator */}
-        <div className="absolute bottom-1 left-1/2 h-[3px] w-16 -translate-x-1/2 rounded-full bg-white/20" />
+      <div className="rounded-[min(14%,2rem)] border-2 border-border/30 bg-[#1a1a1a] p-[2.5%] shadow-2xl shadow-black/40">
+        {screenshot ? (
+          <img
+            src={screenshot}
+            alt={title}
+            className="block w-full rounded-[min(11%,1.5rem)]"
+            draggable={false}
+          />
+        ) : (
+          <div
+            className="flex aspect-[9/19.5] items-center justify-center rounded-[min(11%,1.5rem)] bg-bg-elevated"
+            style={{ background: `linear-gradient(${angle}deg, var(--bg-elevated), var(--border))` }}
+          >
+            <span className="font-serif text-5xl text-text/[0.08]">{title.charAt(0)}</span>
+          </div>
+        )}
       </div>
-
-      {/* Dots */}
-      {showDots && screenshots.length > 1 && (
-        <div className="mt-3 flex justify-center gap-1.5">
-          {screenshots.map((_, i) => (
-            <div
-              key={i}
-              className={`h-1 rounded-full transition-all duration-500 ${
-                i === current ? "w-3 bg-accent" : "w-1 bg-text-muted/30"
-              }`}
-            />
-          ))}
-        </div>
-      )}
     </div>
   );
 }
 
-/* ── Phone Showcase (3 phones fanned out with hover interactions) ── */
+/* ── Phone Showcase ── */
+/* Pure CSS positioning + transitions. Zero Framer Motion on wrappers = zero GPU compositing = crisp images. */
 function PhoneShowcase({ screenshots, title }: { screenshots: string[]; title: string }) {
   const [hovered, setHovered] = useState<number | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
 
   const phones = [
-    {
-      screenshots: screenshots[1] ? [screenshots[1]] : screenshots[0] ? [screenshots[0]] : [],
-      x: -75,
-      rotate: -8,
-      baseScale: 0.85,
-      z: 1,
-      delay: 0.15,
-    },
-    {
-      screenshots: screenshots,
-      x: 0,
-      rotate: 0,
-      baseScale: 1,
-      z: 10,
-      delay: 0,
-    },
-    {
-      screenshots: screenshots[2] ? [screenshots[2]] : screenshots[0] ? [screenshots[0]] : [],
-      x: 75,
-      rotate: 8,
-      baseScale: 0.85,
-      z: 1,
-      delay: 0.2,
-    },
+    { img: screenshots[1] ?? screenshots[0] ?? null, rotate: -8, x: -75, z: 1, w: 179, wHover: 240, delay: "0.15s" },
+    { img: screenshots[0] ?? null,                    rotate: 0,  x: 0,   z: 10, w: 210, wHover: 260, delay: "0s" },
+    { img: screenshots[2] ?? screenshots[0] ?? null, rotate: 8,  x: 75,  z: 1, w: 179, wHover: 240, delay: "0.2s" },
   ];
 
   return (
     <div
-      className="relative flex h-[360px] items-center justify-center phone-showcase md:h-[420px]"
-      style={{ perspective: "1500px" }}
+      ref={ref}
+      className="relative h-[360px] phone-showcase md:h-[420px]"
       onMouseLeave={() => setHovered(null)}
     >
-      {phones.map((phone, i) => (
-        <motion.div
-          key={i}
-          className="absolute"
-          style={{ zIndex: hovered === i ? 20 : phone.z }}
-          initial={{ opacity: 0, y: 60, x: 0, rotate: 0 }}
-          animate={{
-            opacity: hovered !== null && hovered !== i ? 0.6 : 1,
-            y: 0,
-            x: phone.x,
-            rotate: hovered === i ? 0 : phone.rotate,
-            scale: hovered === i ? 1.1 : phone.baseScale,
-          }}
-          transition={{
-            duration: 0.5,
-            ease,
-            opacity: { duration: 0.3 },
-            y: { delay: phone.delay, duration: 0.7 },
-            x: { delay: phone.delay, duration: 0.7 },
-          }}
-          onMouseEnter={() => setHovered(i)}
-        >
-          <PhoneMockup screenshots={phone.screenshots} title={title} showDots={false} />
-        </motion.div>
-      ))}
+      {phones.map((phone, i) => {
+        const isActive = hovered === i;
+        const isDimmed = hovered !== null && !isActive;
+        const currentW = isActive ? phone.wHover : phone.w;
+        const needsRotate = !isActive && phone.rotate !== 0;
+
+        return (
+          <div
+            key={i}
+            className="absolute inset-y-0 flex items-center"
+            style={{
+              left: `calc(50% + ${phone.x}px - ${currentW / 2}px)`,
+              zIndex: isActive ? 20 : phone.z,
+              transition: "left 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
+          >
+            <div
+              className="cursor-pointer"
+              style={{
+                width: currentW,
+                opacity: !inView ? 0 : isDimmed ? 0.5 : 1,
+                transform: needsRotate ? `rotate(${phone.rotate}deg)` : "none",
+                transition: "width 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+                transitionDelay: inView ? "0s" : phone.delay,
+              }}
+              onMouseEnter={() => setHovered(i)}
+            >
+              <PhoneMockup screenshot={phone.img} title={title} />
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -399,7 +348,8 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
       initial={{ opacity: 0, y: 60 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.8, delay: 0.1, ease }}
-      className="group overflow-hidden rounded-2xl border border-border/30 bg-bg-elevated/10 p-6 transition-colors duration-300 hover:border-accent/15 hover:bg-bg-elevated/20 md:p-8"
+      transformTemplate={({ y }) => y && y !== "0px" && y !== 0 ? `translateY(${y})` : "none"}
+      className="group rounded-2xl border border-border/30 bg-bg-elevated/10 p-6 transition-colors duration-300 hover:border-accent/15 hover:bg-bg-elevated/20 md:p-8"
     >
       <div
         className={`flex flex-col gap-8 lg:flex-row lg:items-center ${
@@ -474,6 +424,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
           initial={{ opacity: 0, x: isEven ? 60 : -60 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.9, delay: 0.25, ease }}
+          transformTemplate={({ x }) => x && x !== "0px" && x !== 0 ? `translateX(${x})` : "none"}
           className="flex flex-1 flex-col items-center gap-4"
         >
           {/* Device toggle */}
@@ -533,8 +484,9 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
                 key="phones"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
+                exit={{ opacity: 0 }}
                 transition={{ duration: 0.4, ease }}
+                transformTemplate={() => "none"}
                 className="w-full"
               >
                 <PhoneShowcase screenshots={screenshots} title={project.title} />
