@@ -43,6 +43,8 @@ const statusConfig: Record<ProjectStatus, { dot: string; label: string }> = {
 
 const projectScreenshots: Record<string, string[]> = {
   neurotype: ["/images/projects/neurotype_today.png", "/images/projects/neurotype_progress.png", "/images/projects/neurotype_session.png"],
+  volo: ["/images/projects/volo_home.png", "/images/projects/volo_ops.png", "/images/projects/volo_nat.png"],
+  "weather-time-widget": ["/images/projects/wtw_promo.png", "/images/projects/wtw_widgets.jpg", "/images/projects/wtw_settings.jpg"],
   aviaassist: ["/images/projects/avia_ss1.png", "/images/projects/avia_ss2.png", "/images/projects/aviaassist_thumbnail.png"],
   "gym-booking": ["/images/projects/smallgym_thumbnail.png"],
   "checkers-ai": ["/images/projects/checkers.png"],

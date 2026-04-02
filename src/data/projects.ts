@@ -53,6 +53,16 @@ export const projects: Project[] = [
     demo: "https://www.youtube.com/embed/WBDuho0EyIU",
   },
   {
+    id: "weather-time-widget",
+    title: "WeatherTimeWidget",
+    subtitle: "iOS Widget — Weather, Date & Time All Together",
+    description: "The only iOS widget that combines weather, date, and time into one clean widget. Multiple sizes, dark/light themes, hourly forecast, and fully customizable units.",
+    tech: ["Swift", "WidgetKit", "iOS"],
+    image: "/images/projects/wtw_promo.png",
+    category: "apps",
+    status: "live",
+  },
+  {
     id: "gym-booking",
     title: "Gym Booking App",
     subtitle: "Solving Gym Overcrowding",
