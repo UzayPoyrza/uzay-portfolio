@@ -7,7 +7,7 @@ export interface Project {
   description: string;
   tech: string[];
   image: string;
-  category: "apps" | "ai" | "web";
+  category: "apps" | "ai" | "web" | "cli";
   status: ProjectStatus;
   github?: string;
   live?: string;
@@ -36,6 +36,28 @@ export const projects: Project[] = [
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "apps",
     status: "dev",
+  },
+  {
+    id: "incraft",
+    title: "Incraft",
+    subtitle: "AI Guided Meditation Generator",
+    description: "Prompt-to-guided meditation generator with a custom studio for therapists, creators, and instructors. Users enter what they need, configure voice, duration, and protocol, and the app generates a personalized script via AI, pairs it with TTS audio and ambient soundscapes, and delivers a full playback experience. Freemium model with Stripe billing, deployed as a RESTful API on AWS Lambda with self-healing post-processing.",
+    tech: ["Next.js", "Stripe", "AWS Lambda", "ElevenLabs", "Supabase", "PostHog", "Python"],
+    image: "/images/projects/aviaassist_thumbnail.png",
+    category: "web",
+    status: "live",
+    live: "https://incraft.io",
+  },
+  {
+    id: "myro",
+    title: "Myro",
+    subtitle: "Competitive Programming Coach",
+    description: "Primarily CLI-based. Passion project with a PhD friend from Princeton and UC Riverside. Goal is to make you red in Codeforces in the shortest time possible - a problem that takes 40 mins to solve, Myro guides you through the key observations in 15 without giving it away.",
+    tech: ["Rust", "LLMs", "CLI"],
+    image: "/images/projects/aviaassist_thumbnail.png",
+    category: "cli",
+    status: "dev",
+    live: "https://myro.coach",
   },
   {
     id: "aviaassist",
@@ -111,33 +133,11 @@ export const projects: Project[] = [
     live: "https://volopilot.app",
   },
   {
-    id: "incraft",
-    title: "Incraft",
-    subtitle: "AI Guided Meditation Generator",
-    description: "Prompt-to-guided meditation generator with a custom studio for therapists, creators, and instructors. Users enter what they need, configure voice, duration, and protocol, and the app generates a personalized script via AI, pairs it with TTS audio and ambient soundscapes, and delivers a full playback experience. Freemium model with Stripe billing, deployed as a RESTful API on AWS Lambda with self-healing post-processing.",
-    tech: ["Next.js", "Stripe", "AWS Lambda", "ElevenLabs", "Supabase", "PostHog", "Python"],
-    image: "/images/projects/aviaassist_thumbnail.png",
-    category: "web",
-    status: "live",
-    live: "https://incraft.io",
-  },
-  {
-    id: "myro",
-    title: "Myro",
-    subtitle: "Competitive Programming Coach",
-    description: "Primarily CLI-based. Passion project with a PhD friend from Princeton and UC Riverside. Goal is to make you red in Codeforces in the shortest time possible - a problem that takes 40 mins to solve, Myro guides you through the key observations in 15 without giving it away.",
-    tech: ["Rust", "LLMs", "CLI"],
-    image: "/images/projects/aviaassist_thumbnail.png",
-    category: "web",
-    status: "dev",
-    live: "https://myro.coach",
-  },
-  {
     id: "checkers-ai",
     title: "Checkers AI",
     subtitle: "Alpha-Beta vs. Reinforcement Learning",
     description:
-      "A terminal-based checkers engine with multiple game modes: human vs human, human vs AI, and AI vs AI. Implements alpha-beta pruning with configurable depth and a Q-Learning RL agent trained via self-play. After 10,000 episodes, the RL agent outperformed alpha-beta in most matches.",
+      "Built this from scratch after my reinforcement learning class. See if you can beat my AI (alpha-beta pruning, depth 4, running Python in your browser via Pyodide)",
     tech: ["Python", "Q-Learning", "Alpha-Beta Pruning"],
     image: "/images/projects/checkers.png",
     category: "ai",
@@ -150,4 +150,5 @@ export const projectCategories = [
   { key: "apps", label: "apps" },
   { key: "web", label: "web" },
   { key: "ai", label: "ai / ml" },
+  { key: "cli", label: "cli" },
 ] as const;

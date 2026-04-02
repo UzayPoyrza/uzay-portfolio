@@ -14,6 +14,13 @@ import { skillCategories } from "@/data/skills";
 import { timeline } from "@/data/experience";
 import MeditationDemo from "@/components/demos/MeditationDemo";
 import CheckersDemo from "@/components/demos/CheckersDemo";
+import dynamic from "next/dynamic";
+
+const TerminalPlayer = dynamic(() => import("@/components/demos/TerminalPlayer"), { ssr: false });
+
+const terminalRecordings: Record<string, string> = {
+  myro: "/recordings/myro.cast",
+};
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 20 },
@@ -33,6 +40,7 @@ const typeLabels: Record<string, string> = {
   apps: "Mobile App",
   web: "Website",
   ai: "AI / ML",
+  cli: "CLI Tool",
 };
 
 const statusConfig: Record<ProjectStatus, { dot: string; label: string }> = {
@@ -321,6 +329,197 @@ function WebShowcase({ screenshots, title, url }: { screenshots: string[]; title
   );
 }
 
+/* ── Terminal Showcase (CLI projects) ── */
+interface TerminalLine {
+  text: string;
+  prompt?: boolean;
+  accent?: boolean;
+  bold?: boolean;
+  dim?: boolean;
+}
+
+interface TerminalScreen {
+  label: string;
+  lines: TerminalLine[];
+}
+
+const terminalScreens: TerminalScreen[] = [
+  {
+    label: "startup",
+    lines: [
+      { text: "myro", prompt: true },
+      { text: "" },
+      { text: "  ┌──────────────────────────────────────┐", dim: true },
+      { text: "  │            myro v0.1.0               │", dim: true },
+      { text: "  │    competitive programming coach     │", dim: true },
+      { text: "  └──────────────────────────────────────┘", dim: true },
+      { text: "" },
+      { text: "  Fetching problem...", accent: true },
+      { text: "  CF-1842E  Tenzing and His Animal Friends", bold: true },
+      { text: "  Rating: 2200  |  Tags: graphs, greedy", dim: true },
+      { text: "" },
+      { text: "ready — press enter to begin ▊", prompt: true },
+    ],
+  },
+  {
+    label: "hint",
+    lines: [
+      { text: "myro solve", prompt: true },
+      { text: "" },
+      { text: "  ⏱  Timer started", dim: true },
+      { text: "" },
+      { text: "  Observation 1/3", accent: true },
+      { text: "  Think about what happens when you model" },
+      { text: "  friendships as edges in a graph." },
+      { text: "" },
+      { text: "  What property must the graph have for", dim: true },
+      { text: "  all animals to coexist in two groups?", dim: true },
+      { text: "" },
+      { text: "type your answer or enter for next hint ▊", prompt: true },
+    ],
+  },
+  {
+    label: "progress",
+    lines: [
+      { text: "myro stats", prompt: true },
+      { text: "" },
+      { text: "  Your Progress", accent: true },
+      { text: "  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", dim: true },
+      { text: "  Problems solved    47 / 200" },
+      { text: "  Current streak     12 days" },
+      { text: "  Avg solve time     18m → 14m  ↓", bold: true },
+      { text: "  Rating estimate    1847 → 1923", accent: true },
+      { text: "" },
+      { text: "  Weak topics: segment trees, dp on trees", dim: true },
+      { text: "  Next session: dp optimization", dim: true },
+      { text: "" },
+      { text: "▊", prompt: true },
+    ],
+  },
+];
+
+function TerminalShowcase({ title, castFile }: { title: string; castFile?: string }) {
+  const [current, setCurrent] = useState(0);
+  const [hovered, setHovered] = useState(false);
+  const [castFailed, setCastFailed] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+
+  const showSimulated = !castFile || castFailed;
+
+  useEffect(() => {
+    if (!showSimulated || hovered) return;
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % terminalScreens.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [hovered, showSimulated]);
+
+  const go = (dir: number) => {
+    setCurrent((prev) => (prev + dir + terminalScreens.length) % terminalScreens.length);
+  };
+
+  return (
+    <div
+      ref={ref}
+      className="cursor-pointer"
+      style={{
+        opacity: inView ? 1 : 0,
+        transition: "opacity 0.6s ease",
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div className="rounded-xl border border-border/40 bg-[#0d1117] shadow-2xl shadow-black/30">
+        {/* Terminal chrome */}
+        <div className="flex items-center border-b border-white/5 px-3 py-1.5">
+          <div className="flex gap-1.5">
+            <div className="h-2 w-2 rounded-full bg-red-500/50" />
+            <div className="h-2 w-2 rounded-full bg-yellow-500/50" />
+            <div className="h-2 w-2 rounded-full bg-green-500/50" />
+          </div>
+          <div className="ml-3 flex-1 text-center">
+            <span className="font-mono text-[10px] text-text-muted/40">{title.toLowerCase()} — ~/competitive</span>
+          </div>
+        </div>
+
+        {/* Terminal content */}
+        {showSimulated ? (
+          <div className="relative min-h-[280px] md:min-h-[320px]">
+            {terminalScreens.map((screen, i) => (
+              <div
+                key={i}
+                className="absolute inset-0 p-4 font-mono text-[11px] leading-[1.7] transition-opacity duration-500 md:p-5 md:text-[12.5px]"
+                style={{ opacity: i === current ? 1 : 0, pointerEvents: i === current ? "auto" : "none" }}
+              >
+                {screen.lines.map((line, j) => (
+                  <div
+                    key={j}
+                    className={
+                      line.prompt
+                        ? "text-green-400/90"
+                        : line.accent
+                          ? "text-accent"
+                          : line.bold
+                            ? "text-text/90 font-medium"
+                            : line.dim
+                              ? "text-text-muted/40"
+                              : "text-text-muted/70"
+                    }
+                    style={{ minHeight: line.text === "" ? "1.2em" : undefined }}
+                  >
+                    {line.prompt && <span className="text-blue-400/60">❯ </span>}
+                    {line.text}
+                  </div>
+                ))}
+              </div>
+            ))}
+
+            {/* Arrows */}
+            <button
+              onClick={() => go(-1)}
+              className="absolute left-3 top-1/2 z-10 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-bg/60 text-text-muted backdrop-blur-sm transition-all hover:bg-accent hover:text-bg"
+              aria-label="Previous"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+            </button>
+            <button
+              onClick={() => go(1)}
+              className="absolute right-3 top-1/2 z-10 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-bg/60 text-text-muted backdrop-blur-sm transition-all hover:bg-accent hover:text-bg"
+              aria-label="Next"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+            </button>
+          </div>
+        ) : (
+          <div className="min-h-[280px] md:min-h-[320px]">
+            <TerminalPlayer
+              src={castFile!}
+              onError={() => setCastFailed(true)}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Dots (simulated mode only) */}
+      {showSimulated && (
+        <div className="mt-3 flex justify-center gap-1.5">
+          {terminalScreens.map((screen, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrent(i)}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === current ? "w-5 bg-accent" : "w-1.5 bg-text-muted/30 hover:bg-text-muted/50"
+              }`}
+              aria-label={`Go to ${screen.label}`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ── Project Showcase (full-width row) ── */
 function ProjectShowcase({ project, website, index }: { project: (typeof projects)[number]; website?: (typeof projects)[number]; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -328,6 +527,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
   const [view, setView] = useState<"app" | "web">("app");
   const isEven = index % 2 === 0;
   const isMobile = project.category === "apps";
+  const isTerminal = project.category === "cli";
   const type = typeLabels[project.category] || project.category;
   const status = statusConfig[project.status];
   const screenshots = projectScreenshots[project.id] || [];
@@ -344,7 +544,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
     >
       <div
         className={`flex flex-col gap-8 lg:flex-row lg:items-center ${
-          !isEven ? "lg:flex-row-reverse" : ""
+          (!isMobile && !isTerminal) || !isEven ? "lg:flex-row-reverse" : ""
         }`}
       >
         {/* Text side */}
@@ -381,7 +581,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
             ))}
           </div>
 
-          {(project.github || project.live || website?.live || project.id === "checkers-ai") && (
+          {(project.github || project.live || website?.live) && (
             <div className="flex gap-4 pt-2">
               {project.github && (
                 <a href={project.github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-text-muted transition-colors hover:text-accent">
@@ -399,11 +599,6 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
                 <a href={website.live} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-text-muted transition-colors hover:text-accent">
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3.5 1.5h7v7M10 2L2 10"/></svg>
                   {website.live.replace("https://", "")}
-                </a>
-              )}
-              {project.id === "checkers-ai" && (
-                <a href="#checkers-demo" onClick={(e) => { e.preventDefault(); document.getElementById("checkers-demo")?.scrollIntoView({ behavior: "smooth" }); }} className="flex items-center gap-1.5 text-xs text-text-muted transition-colors hover:text-accent">
-                  Try Demo
                 </a>
               )}
             </div>
@@ -482,6 +677,14 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
               >
                 <PhoneShowcase screenshots={screenshots} title={project.title} />
               </motion.div>
+            ) : isTerminal ? (
+              <motion.div key="terminal" className="w-full">
+                <TerminalShowcase title={project.title} castFile={terminalRecordings[project.id]} />
+              </motion.div>
+            ) : project.id === "checkers-ai" ? (
+              <div className="w-full">
+                <CheckersDemo embedded />
+              </div>
             ) : (
               <motion.div key="web-only" className="w-full">
                 <WebShowcase
@@ -503,6 +706,7 @@ export default function Home() {
   const activeSection = useActiveSection(sectionIds);
   const [scrolled, setScrolled] = useState(false);
   const [showLegacy, setShowLegacy] = useState(false);
+  const [expandedLegacy, setExpandedLegacy] = useState<string | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -733,46 +937,73 @@ export default function Home() {
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                     className="overflow-hidden"
                   >
-                    <div className="mt-6 grid grid-cols-2 gap-4">
+                    <div className="mt-6 space-y-3">
                       {projects.filter((p) => legacyProjectIds.has(p.id)).map((project) => {
-                        const screenshots = projectScreenshots[project.id] || [];
                         const status = statusConfig[project.status];
+                        const isExpanded = expandedLegacy === project.id;
                         return (
                           <div
                             key={project.id}
-                            className="group rounded-xl border border-border/30 bg-bg-elevated/10 p-3 transition-colors duration-200 hover:border-accent/15 hover:bg-bg-elevated/20"
+                            onClick={() => setExpandedLegacy(isExpanded ? null : project.id)}
+                            className={`group cursor-pointer rounded-md border p-3 transition-all duration-200 hover:bg-bg-elevated ${
+                              project.status === "live" ? "border-green-500/50" :
+                              project.status === "dev" ? "border-yellow-500/50" :
+                              "border-red-500/50"
+                            }`}
                           >
-                            {screenshots[0] && (
-                              <img
-                                src={screenshots[0]}
-                                alt={project.title}
-                                className="mb-3 w-full rounded-lg"
-                                draggable={false}
-                              />
-                            )}
-                            <div className="flex items-center justify-between">
-                              <span className="font-mono text-[9px] font-medium uppercase tracking-[0.15em] text-accent">
-                                {typeLabels[project.category]}
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <span className={`h-1.5 w-1.5 rounded-full ${status.dot}`} />
-                                <span className="text-[9px] text-text-muted">{status.label}</span>
-                              </span>
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0">
+                                <span className="font-serif text-base text-text transition-colors group-hover:text-accent">{project.title}</span>
+                                {project.subtitle && <p className="mt-0.5 text-[11px] text-text-muted">{project.subtitle}</p>}
+                              </div>
+                              <motion.svg
+                                animate={{ rotate: isExpanded ? 180 : 0 }}
+                                transition={{ duration: 0.2 }}
+                                width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                                className="mt-1 shrink-0 text-text-muted"
+                              >
+                                <polyline points="6 9 12 15 18 9" />
+                              </motion.svg>
                             </div>
-                            <h3 className="mt-1 font-serif text-base text-text transition-colors group-hover:text-accent">
-                              {project.title}
-                            </h3>
-                            <p className="mt-0.5 text-[11px] text-text-muted">{project.subtitle}</p>
-                            {(project.github || project.demo) && (
+                            {(project.github || project.live) && (
                               <div className="mt-2 flex gap-3">
                                 {project.github && (
-                                  <a href={project.github} target="_blank" rel="noopener noreferrer" className="text-[11px] text-text-muted transition-colors hover:text-accent">GitHub</a>
+                                  <a href={project.github} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs text-accent transition-colors hover:text-accent-hover">GitHub</a>
                                 )}
-                                {project.demo && (
-                                  <a href={project.demo} target="_blank" rel="noopener noreferrer" className="text-[11px] text-text-muted transition-colors hover:text-accent">Demo</a>
+                                {project.live && (
+                                  <a href={project.live} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs text-accent transition-colors hover:text-accent-hover">Live Site</a>
                                 )}
                               </div>
                             )}
+                            <AnimatePresence>
+                              {isExpanded && (
+                                <motion.div
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: "auto", opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                                  className="overflow-hidden"
+                                >
+                                  <p className="mt-3 text-sm leading-relaxed text-text-muted">{project.description}</p>
+                                  <div className="mt-3 flex flex-wrap gap-1.5">
+                                    {project.tech.map((t) => (
+                                      <span key={t} className="rounded border border-text/20 px-1.5 py-0.5 font-mono text-[10px] text-text-muted">{t}</span>
+                                    ))}
+                                  </div>
+                                  {project.demo && (
+                                    <div className="mt-3 aspect-video w-full overflow-hidden rounded">
+                                      <iframe
+                                        src={project.demo}
+                                        title={`${project.title} demo`}
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                        className="h-full w-full"
+                                      />
+                                    </div>
+                                  )}
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
                           </div>
                         );
                       })}
@@ -803,7 +1034,6 @@ export default function Home() {
             </motion.p>
             <motion.div {...fadeUp(3.0)} className="space-y-6">
               <MeditationDemo />
-              <div id="checkers-demo"><CheckersDemo /></div>
             </motion.div>
           </section>
 

@@ -89,6 +89,31 @@ html {
   background: var(--text-muted);
 }
 
+/* Asciinema player — strip default chrome, blend into our terminal frame */
+.terminal-player .ap-wrapper {
+  background: transparent !important;
+}
+.terminal-player .ap-player {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  overflow: hidden;
+}
+.terminal-player .ap-terminal {
+  background: transparent !important;
+  padding: 0 !important;
+}
+.terminal-player .ap-start-button,
+.terminal-player .ap-overlay {
+  display: none !important;
+}
+.terminal-player .ap-control-bar {
+  background: rgba(0, 0, 0, 0.4) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
