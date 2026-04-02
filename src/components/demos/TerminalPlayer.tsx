@@ -18,7 +18,6 @@ interface TerminalPlayerProps {
 export default function TerminalPlayer({ src, onError, ...options }: TerminalPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<any>(null);
-  const [started, setStarted] = useState(false);
 
   useEffect(() => {
     import("asciinema-player").then((AsciinemaPlayer) => {
@@ -26,7 +25,7 @@ export default function TerminalPlayer({ src, onError, ...options }: TerminalPla
       containerRef.current.innerHTML = "";
       try {
         playerRef.current = AsciinemaPlayer.create(src, containerRef.current, {
-          autoPlay: false,
+          autoPlay: true,
           loop: true,
           speed: 1.5,
           idleTimeLimit: 2,
@@ -46,27 +45,25 @@ export default function TerminalPlayer({ src, onError, ...options }: TerminalPla
     };
   }, [src]);
 
-  const handlePlay = () => {
+  const restart = () => {
+    playerRef.current?.seek(0);
     playerRef.current?.play();
-    setStarted(true);
   };
 
   return (
-    <div className="relative">
+    <div className="relative group">
       <div ref={containerRef} className="terminal-player" />
-      {!started && (
-        <button
-          onClick={handlePlay}
-          className="absolute inset-0 z-10 flex items-center justify-center bg-black/20 transition-opacity hover:bg-black/10"
-          aria-label="Play recording"
-        >
-          <div className="flex h-16 w-16 items-center justify-center rounded-full border border-white/20 bg-white/10 backdrop-blur-sm transition-transform hover:scale-110">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="white" className="ml-1">
-              <polygon points="5 3 19 12 5 21 5 3" />
-            </svg>
-          </div>
-        </button>
-      )}
+      <button
+        onClick={restart}
+        className="absolute top-3 right-3 z-10 flex items-center gap-1.5 rounded-md border border-white/15 bg-black/50 px-2.5 py-1 font-mono text-[10px] text-white/60 backdrop-blur-sm transition-all hover:border-white/30 hover:text-white/90"
+        aria-label="Start from beginning"
+      >
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="1 4 1 10 7 10" />
+          <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+        </svg>
+        restart
+      </button>
     </div>
   );
 }
