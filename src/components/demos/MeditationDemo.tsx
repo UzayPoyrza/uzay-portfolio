@@ -1,7 +1,9 @@
 "use client";
 
+import { useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import AudioPlayer from "./AudioPlayer";
+import WaveformVisualizer from "./WaveformVisualizer";
 
 const icons = {
   code: (
@@ -33,7 +35,96 @@ const pipelineSteps = [
   { label: "auto mix & master", icon: icons.sliders },
 ];
 
-export default function MeditationDemo() {
+// ──────────── Embedded demo widget ────────────
+function EmbeddedMeditationDemo() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const contextRef = useRef<AudioContext | null>(null);
+
+  const initAudio = useCallback(() => {
+    if (contextRef.current) return;
+    const ctx = new AudioContext();
+    const analyserNode = ctx.createAnalyser();
+    analyserNode.fftSize = 2048;
+    const audio = new Audio("/audio/meditation.mp3");
+    const source = ctx.createMediaElementSource(audio);
+    source.connect(analyserNode);
+    analyserNode.connect(ctx.destination);
+    audioRef.current = audio;
+    contextRef.current = ctx;
+    setAnalyser(analyserNode);
+    audio.addEventListener("ended", () => setIsPlaying(false));
+  }, []);
+
+  const toggle = () => {
+    initAudio();
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-5">
+      {/* Pipeline — vertical */}
+      <div className="flex flex-col gap-1.5">
+        <span className="mb-1 font-mono text-[10px] uppercase tracking-[0.15em] text-text-muted/50">pipeline</span>
+        {pipelineSteps.map((step, i) => (
+          <motion.div
+            key={step.label}
+            initial={{ opacity: 0, x: -12 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.15 + i * 0.1, ease: "easeOut" }}
+            className="flex items-center gap-2"
+          >
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded border border-accent/20 bg-accent/5 text-accent">
+              {step.icon}
+            </span>
+            <span className="font-mono text-[11px] text-text-muted/70">{step.label}</span>
+            {i < pipelineSteps.length - 1 && (
+              <span className="ml-auto font-mono text-[10px] text-accent/30">↓</span>
+            )}
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Divider */}
+      <div className="border-t border-white/5" />
+
+      {/* Play button + waveform */}
+      <div className="flex flex-col items-center gap-4">
+        <button
+          onClick={toggle}
+          className="group flex items-center gap-2.5 border border-accent/40 bg-accent/5 px-5 py-2.5 font-mono text-xs text-accent transition-all hover:border-accent hover:bg-accent/10"
+        >
+          {isPlaying ? (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-accent">
+              <rect x="6" y="4" width="4" height="16" /><rect x="14" y="4" width="4" height="16" />
+            </svg>
+          ) : (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-accent transition-transform group-hover:scale-110">
+              <polygon points="5 3 19 12 5 21 5 3" />
+            </svg>
+          )}
+          {isPlaying ? "pause" : "play demo"}
+        </button>
+        <div className="w-full">
+          <WaveformVisualizer analyser={analyser} isPlaying={isPlaying} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ──────────── Main export ────────────
+export default function MeditationDemo({ embedded = false }: { embedded?: boolean } = {}) {
+  if (embedded) return <EmbeddedMeditationDemo />;
+
   return (
     <div className="border border-border p-6 transition-colors hover:border-accent/30">
       <div className="flex items-center gap-2">
