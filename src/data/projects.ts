@@ -74,8 +74,8 @@ export const projects: Project[] = [
   {
     id: "incraft",
     title: "Incraft",
-    subtitle: "Studio-Quality AI Guided Meditation Generator",
-    description: "For Neurotype I built an AI pipeline that turns research papers into meditation sessions. Using the fundamentals I created Incraft: go from a prompt to a fully produced meditation or CBT session in seconds. For casual use, typing 'I'm anxious about my meeting tomorrow' gets you a custom session tailored exactly to that. Therapists can go deeper - choosing from ~50 evidence-based protocols like CBT, PMR, urge surfing, and more, each with its own structure, safety constraints, and pacing rules. Every session is pause-aware and matches sounds to each session - a breathwork session gets ocean waves with pauses timed to the breathing rhythm, a body scan gets soft ambient tones with longer silences between cues. Built a custom studio so therapists, creators, and instructors can further craft exact experiences their clients need.",
+    subtitle: "AI Guided Meditation Generator & Studio",
+    description: "For Neurotype I built an AI pipeline that turns research papers into meditation sessions. Using the fundamentals I created Incraft: go from a prompt to a fully produced meditation or CBT session in seconds. For casual use, typing 'I'm anxious about my meeting tomorrow' gets you a custom session tailored exactly to that. Therapists can go deeper - choosing from ~50 evidence-based protocols like CBT, PMR, urge surfing, and more, each with its own structure, safety constraints, and pacing rules. Every session is pause-aware and matches sounds to each session - a prompt like 'having a panic attack' gets a breathwork session with ocean waves and pauses timed to the breathing rhythm. Built a custom studio so therapists, creators, and instructors can further access and craft exact experiences their clients need.",
     tech: ["Next.js", "Stripe", "AWS Lambda", "ElevenLabs", "Supabase", "PostHog", "Python"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "web",

@@ -394,7 +394,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
             ? `min-[1440px]:flex-row min-[1440px]:items-center ${!isEven ? "min-[1440px]:flex-row-reverse" : ""}`
             : isMobile
               ? `lg:flex-row lg:items-center ${!isEven ? "lg:flex-row-reverse" : ""}`
-              : `min-[1200px]:flex-row min-[1200px]:items-center ${!isEven ? "min-[1200px]:flex-row-reverse" : ""}`
+              : `min-[1200px]:flex-row-reverse min-[1200px]:items-center`
         }`}
       >
         {/* Text side */}
@@ -471,6 +471,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
           transformTemplate={({ x }) => x && x !== "0px" && x !== 0 ? `translateX(${x})` : "none"}
           className={`flex flex-1 flex-col items-center gap-4 min-w-0 ${isTerminal ? "" : "overflow-visible"}`}
         >
+          <div className={`w-full ${!isMobile && !isTerminal && project.id !== "checkers-ai" ? "web-mockup-zoom" : ""}`}>
           {/* Device toggle */}
           {project.id === "incraft" && (
             <div className="inline-flex rounded-lg border border-border/40 p-0.5">
@@ -598,6 +599,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
               </motion.div>
             )}
           </AnimatePresence>
+          </div>
         </motion.div>
       </div>
     </motion.div>
@@ -790,7 +792,6 @@ export default function Home() {
               I love building things nobody&apos;s built before - it means designing
               UIs that feel intuitive with no reference point and solving unique engineering problems.
               Under <span className="text-text">LaunchSpace</span> I&apos;ve taken every product from zero to launch, focusing on performance, beautiful UIs and having real-world impact.
-              I love collaborating with developers and non-developers alike.
               Volo and Neurotype are awaiting Apple review, the rest you can use right now.
             </motion.p>
           </section>
