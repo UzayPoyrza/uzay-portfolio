@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
 import CustomCursor from "@/components/layout/CustomCursor";
 import LoadingScreen from "@/components/layout/LoadingScreen";
 import { useTheme } from "@/components/layout/ThemeProvider";
@@ -909,15 +908,6 @@ export default function Home() {
               </AnimatePresence>
             </div>
 
-            <motion.div {...fadeUp(3.0)} className="mt-10 text-center">
-              <Link
-                href="/projects"
-                className="inline-flex items-center gap-2 text-sm text-accent transition-colors hover:text-accent-hover"
-              >
-                View all projects
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3.5 1.5h7v7M10 2L2 10"/></svg>
-              </Link>
-            </motion.div>
           </section>
 
 
