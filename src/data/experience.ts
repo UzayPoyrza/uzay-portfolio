@@ -2,6 +2,7 @@ export interface TimelineEntry {
   type: "work" | "education";
   title: string;
   organization: string;
+  url?: string;
   period: string;
   description: string;
   highlight?: string;
@@ -12,6 +13,7 @@ export const timeline: TimelineEntry[] = [
     type: "work",
     title: "Full-Stack Developer Intern",
     organization: "Optimum7",
+    url: "https://www.optimum7.com/",
     period: "2024",
     description:
       "Worked on full-stack development at a digital marketing and e-commerce agency. Integrated BigCommerce & Shopify APIs into dynamic platforms.",
@@ -20,6 +22,7 @@ export const timeline: TimelineEntry[] = [
     type: "work",
     title: "Software Engineering Intern",
     organization: "CsTech",
+    url: "https://www.cstech.com.tr/en/home-page/",
     period: "2023",
     description:
       "Built a C++ tool that optimized language translations at a software company in the Defense Industry.",

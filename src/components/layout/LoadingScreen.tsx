@@ -27,7 +27,17 @@ const doneVerbs = ["Crunched", "Baked", "Brewed", "Cooked", "Done"];
 const spinFrames = ["|", "/", "-", "\\"];
 
 export default function LoadingScreen() {
-  const [visible, setVisible] = useState(true);
+  // Show by default - but immediately hide if this is a client-side navigation (back from subpage)
+  const [visible, setVisible] = useState(() => {
+    // SSR: default to true, we'll check on client in useEffect
+    if (typeof window === "undefined") return true;
+    // If the page was reached via client-side navigation (back_forward or soft nav),
+    // the performance entry type will be different from "navigate"/"reload"
+    const navEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
+    const navType = navEntry?.type;
+    // Show spinner on fresh loads ("navigate") and reloads ("reload"), skip on back/forward
+    return navType === "navigate" || navType === "reload";
+  });
   const [phase, setPhase] = useState<"loading" | "done">("loading");
   const [verb, setVerb] = useState("");
   const [doneVerb, setDoneVerb] = useState("");
@@ -36,11 +46,13 @@ export default function LoadingScreen() {
   const pickRandom = useCallback(<T,>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)], []);
 
   useEffect(() => {
+    if (!visible) return;
     setVerb(pickRandom(spinnerVerbs));
     setDoneVerb(pickRandom(doneVerbs));
-  }, [pickRandom]);
+  }, [pickRandom, visible]);
 
   useEffect(() => {
+    if (!visible) return;
     // Rotate spinner
     const spinInterval = setInterval(() => {
       setFrame((f) => (f + 1) % spinFrames.length);
@@ -67,7 +79,7 @@ export default function LoadingScreen() {
       clearTimeout(doneTimer);
       clearTimeout(hideTimer);
     };
-  }, [pickRandom]);
+  }, [pickRandom, visible]);
 
   return (
     <AnimatePresence>

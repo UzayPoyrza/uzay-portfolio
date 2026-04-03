@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import CustomCursor from "@/components/layout/CustomCursor";
 import LoadingScreen from "@/components/layout/LoadingScreen";
 import { useTheme } from "@/components/layout/ThemeProvider";
@@ -346,7 +347,7 @@ function TerminalShowcase({ title, castFile }: { title: string; castFile?: strin
             <div className="h-2 w-2 rounded-full bg-green-500/50" />
           </div>
           <div className="ml-3 flex-1 text-center">
-            <span className="font-mono text-[10px] text-text-muted/40">{title.toLowerCase()} — ~/competitive</span>
+            <span className="font-mono text-[10px] text-text-muted/40">{title.toLowerCase()} - ~/competitive</span>
           </div>
         </div>
 
@@ -445,14 +446,21 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
             ))}
           </div>
 
-          {project.github && (
-            <div className="flex gap-4 pt-2">
+          <div className="flex gap-4 pt-2">
+            {project.github && (
               <a href={project.github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-text-muted transition-colors hover:text-accent">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
                 GitHub
               </a>
-            </div>
-          )}
+            )}
+            <Link href={`/projects/${project.id}`} className="flex items-center gap-1.5 text-xs text-text-muted transition-colors hover:text-accent">
+              Read more
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </Link>
+          </div>
         </div>
 
         {/* Device mockup side */}
@@ -769,26 +777,21 @@ export default function Home() {
             >
               CS grad from <span className="text-text">Skidmore College</span>.
               I started coding in high school in Japan and never really stopped. Since then, I&apos;ve built tools for Turkish Airlines pilots,
-              e-commerce platforms at Optimum7, and an AI that beats me at checkers.
+              e-commerce platforms at <a href="https://www.optimum7.com/" target="_blank" rel="noopener noreferrer" className="text-text underline decoration-text-muted/30 underline-offset-2 hover:text-accent hover:decoration-accent/50 transition-colors">Optimum7</a>, and an AI that beats me at checkers.
             </motion.p>
             <motion.p
               {...fadeUp(2.6)}
               className="mt-4 leading-relaxed text-text-muted"
             >
-              I thought that was cool and all, but then{" "}
-              vibe coding happened
-              and I&apos;ve never been more hooked to coding ever. Got{" "}
-              <span className="text-accent">Claude Max</span> with my roommate and now
-              we&apos;ve got four{" "}
-              <span className="text-text">Claude Code CLI</span> terminals each running at all times,{" "}
-              <span className="text-text">MCPs</span> hooked up,
-              custom <span className="text-text">skills</span> loaded. The dopamine hit of
-              shipping in minutes what used to take weeks is genuinely unreasonable.
-              I&apos;m currently building two apps under my company{" "}
-              <span className="text-text">LaunchSpace</span> and they&apos;re about to
-              publish very very soon - not touching grass until they do.
-              After that, I&apos;d love to bring this energy to a team
-              where shipping quality product fast actually matters.
+              I thought that was cool until vibe coding showed up. These days I&apos;ve got{" "}
+              <span className="text-text">Claude Code CLI</span> terminals running at all times with{" "}
+              <span className="text-text">MCPs</span> and custom{" "}
+              <span className="text-text">skills</span> loaded.
+              I love building things nobody&apos;s built before - it means designing
+              UIs that feel intuitive with no reference point and solving unique engineering problems.
+              Under <span className="text-text">LaunchSpace</span> I&apos;ve taken every product from zero to launch, focusing on performance, beautiful UIs and having real-world impact.
+              I love collaborating with developers and non-developers alike.
+              Volo and Neurotype are awaiting Apple review, the rest you can use right now.
             </motion.p>
           </section>
 
@@ -926,7 +929,11 @@ export default function Home() {
                   <p className="text-xs leading-6 tracking-wider text-text-muted uppercase">{entry.period}</p>
                   <div>
                     <h3 className="font-serif text-lg">
-                      {entry.title} &middot; <span className="text-text-muted">{entry.organization}</span>
+                      {entry.title} &middot; {entry.url ? (
+                        <a href={entry.url} target="_blank" rel="noopener noreferrer" className="text-text-muted underline decoration-text-muted/30 underline-offset-2 hover:text-accent hover:decoration-accent/50 transition-colors">{entry.organization}</a>
+                      ) : (
+                        <span className="text-text-muted">{entry.organization}</span>
+                      )}
                     </h3>
                     <p className="mt-1 text-sm text-text-muted">{entry.description}</p>
                   </div>
@@ -950,7 +957,11 @@ export default function Home() {
                   <p className="text-xs leading-6 tracking-wider text-text-muted uppercase">{entry.period}</p>
                   <div>
                     <h3 className="font-serif text-lg">
-                      {entry.title} &middot; <span className="text-text-muted">{entry.organization}</span>
+                      {entry.title} &middot; {entry.url ? (
+                        <a href={entry.url} target="_blank" rel="noopener noreferrer" className="text-text-muted underline decoration-text-muted/30 underline-offset-2 hover:text-accent hover:decoration-accent/50 transition-colors">{entry.organization}</a>
+                      ) : (
+                        <span className="text-text-muted">{entry.organization}</span>
+                      )}
                     </h3>
                     <p className="mt-1 text-sm text-text-muted">{entry.description}</p>
                     {entry.highlight && (

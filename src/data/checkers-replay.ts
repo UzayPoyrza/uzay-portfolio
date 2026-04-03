@@ -30,7 +30,7 @@ const initialBoard: string[][] = [
 export const checkersReplay: ReplayFrame[] = [
   {
     board: initialBoard,
-    move: "Game start — Black (○) moves first",
+    move: "Game start - Black (○) moves first",
     turn: "black",
     capturedBlack: 0,
     capturedWhite: 0,
@@ -78,7 +78,7 @@ export const checkersReplay: ReplayFrame[] = [
       [S, W, S, W, S, W, S, W],
       [W, S, W, S, W, S, W, S],
     ],
-    move: "Black ○ captures (3,4)→(5,2)×(4,3) — wait, (3,4)→(5,6) nah let me redo",
+    move: "Black ○ captures (3,4)→(5,2)×(4,3) - wait, (3,4)→(5,6) nah let me redo",
     turn: "white",
     capturedBlack: 0,
     capturedWhite: 1,
@@ -94,7 +94,7 @@ export const checkersReplay: ReplayFrame[] = [
       [S, W, S, W, S, W, S, W],
       [W, S, W, S, W, S, W, S],
     ],
-    move: "White ● (5,4) → (4,3) — nope",
+    move: "White ● (5,4) → (4,3) - nope",
     turn: "black",
     capturedBlack: 0,
     capturedWhite: 1,
@@ -282,7 +282,7 @@ export const checkersReplayText: string[] = [
   "",
   "[B] Choose piece: (0, 1) → (2, 3)",
   "Black captures back! (0,1)→(2,3) taking (1,0)... wait, wrong direction.",
-  "[B] Choose piece: (1, 2) — invalid, square empty",
+  "[B] Choose piece: (1, 2) - invalid, square empty",
   "[B] Choose piece: (4, 5) → (5, 4)",
   "",
   "Alpha-Beta thinking (depth=4)...",
@@ -536,7 +536,7 @@ def init_game():
     captured_white = 0
     game_over = False
     selected_piece = None
-    status_message = "Your turn — select a piece to move"
+    status_message = "Your turn - select a piece to move"
     return get_state()
 
 def get_state():
@@ -600,7 +600,7 @@ def select_piece(row, col):
             return get_state()
 
     selected_piece = (row, col)
-    status_message = f"Selected ({{row}}, {{col}}) — click destination"
+    status_message = f"Selected ({{row}}, {{col}}) - click destination"
     return get_state()
 
 def make_move(dest_row, dest_col):
@@ -641,7 +641,7 @@ def make_move(dest_row, dest_col):
         # Normal move
         valid, cap = isValidMove(board, turn, sr, sc, dest_row, dest_col)
         if not valid:
-            status_message = "Invalid move — try again"
+            status_message = "Invalid move - try again"
             return get_state()
         if all_captures:
             status_message = "You must capture when possible!"
@@ -675,7 +675,7 @@ def ai_move():
     score, move = minimax(board, 4, -float('inf'), float('inf'), 1, False)
     if move is None:
         game_over = True
-        status_message = "AI has no moves — You win!"
+        status_message = "AI has no moves - You win!"
         return get_state()
 
     sr, sc, dr, dc, cap = move
@@ -711,7 +711,7 @@ def ai_move():
         status_message = "You win!" if black_count > 0 else "AI wins!"
     else:
         turn = 0
-        status_message = "Your turn — select a piece to move"
+        status_message = "Your turn - select a piece to move"
 
     return get_state()
 `;
