@@ -31,10 +31,7 @@ let hasPlayed = false;
 export default function LoadingScreen() {
   const [visible, setVisible] = useState(() => {
     if (hasPlayed) return false;
-    if (typeof window === "undefined") return true;
-    const navEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
-    const navType = navEntry?.type;
-    return navType === "navigate" || navType === "reload";
+    return true;
   });
   const [phase, setPhase] = useState<"loading" | "done">("loading");
   const [verb, setVerb] = useState("");

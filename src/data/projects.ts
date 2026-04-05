@@ -24,6 +24,7 @@ export interface Project {
   highlights?: string[];
   frontend?: string;
   backend?: string;
+  evidence?: { src: string; caption: string };
 }
 
 export const projects: Project[] = [
@@ -32,12 +33,11 @@ export const projects: Project[] = [
     title: "Neurotype",
     subtitle: "Science-based meditation & CBT app",
     description: "I started Neurotype after hearing Harvard-trained psychiatrist Dr. K talk about how different minds respond to different meditation styles. Someone with ADHD may benefit more from sound or movement sessions than a long body scan - but most meditation apps still treat everyone the same. So I built one that doesn't. Neurotype uses AI to turn research across ADHD, anxiety, sleep, and more into full guided meditation and CBT sessions, then adapts recommendations based on what each user responds to best.",
-    tech: ["React Native", "TypeScript", "Supabase", "so many more"],
+    tech: ["React Native (Expo)", "Supabase (PostgreSQL)", "FFmpeg", "StoreKit 2", "ElevenLabs", "Cloudflare R2", "GPT Pro Research"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "apps",
     status: "live",
     appStore: "https://apps.apple.com/tr/app/neurotype-meditate-smarter/id6760377714",
-    github: "https://github.com/UzayPoyrza/Neurotype",
     highlights: [
       "Scrapes and indexes latest meditation research papers automatically",
       "Personalization engine that adapts session style to individual brain type",
@@ -78,7 +78,7 @@ export const projects: Project[] = [
     title: "Incraft",
     subtitle: "AI Guided Meditation Generator & Studio",
     description: "I built Incraft after realizing parts of the pipeline behind Neurotype could be optimized to deliver studio-quality, voiced sessions in under a minute. With Incraft, you describe what you're going through and it generates a complete guided meditation or CBT session tailored to that moment, automatically selecting the protocols and structure that fit best. For therapists, creators, and instructors, that same prompt-based generation can be steered much more explicitly - sessions can be shaped with ~50 evidence-based protocols like CBT, PMR, and urge surfing, each with its own pacing rules, safety constraints, and structure. The studio adds even finer control for crafting sessions for specific patients, clients, or audiences.",
-    tech: ["Next.js", "Stripe", "AWS Lambda", "ElevenLabs", "Supabase", "PostHog", "Python"],
+    tech: ["Next.js", "Stripe", "AWS Lambda", "ElevenLabs", "Supabase", "PostHog", "Python", "OpenRouter"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "web",
     status: "live",
@@ -100,23 +100,26 @@ export const projects: Project[] = [
     title: "Myro",
     subtitle: "Competitive Programming Coach",
     description: "Open-source project with a PhD friend from Princeton and UC Riverside. Myro turns your terminal into a competitive programming gym - it pulls problems from Codeforces, predicts which ones match your skill level using a logistic matrix factorization model, and coaches you through with Socratic hints, not answers. Think Anki meets Codeforces, inside a terminal.",
-    tech: ["Rust", "LLMs", "CLI"],
+    tech: ["Rust", "Ratatui", "Web Scraping", "LLMs", "Supabase"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "cli",
     status: "live",
     live: "https://myro.coach",
+    github: "https://github.com/UzayPoyrza/myro",
     highlights: [
-      "Guides you through key observations without spoiling the solution",
-      "Reduces 40-minute problem solve time down to 15 minutes",
-      "Built in Rust for performance - handles parsing and analysis locally",
-      "Adaptive hint system that reads your progress and adjusts difficulty",
+      "Skill-adaptive problem recommendations",
+      "AI Socratic coaching",
+      "Integrated vim editor",
+      "Codeforces submission & verdict tracking",
+      "Per-tag skill ratings",
+      "Spaced repetition",
     ],
-    frontend: "CLI-first experience built in Rust. Clean terminal UI with syntax-highlighted problem statements, step-by-step hint reveals, and progress tracking. Web landing page at myro.coach.",
-    backend: "Rust core handles problem parsing, solution analysis, and hint generation. LLM integration for understanding problem structure and generating pedagogically sound hints that guide without giving away the answer.",
+    frontend: "CLI-first experience built in Rust with Ratatui, heavily influenced by Claude Code's CLI design. Integrated vim editor for writing and submitting solutions without leaving the terminal. Web landing page at myro.coach.",
+    backend: "• Logistic matrix factorization model for solve-probability prediction\n• Cold-start user embedding fitted on-the-fly from Codeforces history, no retraining needed\n• Codeforces API client with rate limiting and exponential backoff retry\n• HTML scraping for problem statement extraction\n• Spaced repetition + prerequisite-aware problem sequencing\n• LLM coaching engine with observation-based state tracking and intervention detection (stall/velocity/rewrite)\n• Supabase integration for optional cloud sync (GitHub OAuth PKCE)\n• OpenAI-compatible LLM provider (supports OpenRouter, Ollama, local models)\n• XDG-compliant local storage, flat JSON files",
     collaborators: [
       { name: "Uzay Poyraz", role: "Co-Creator & Developer" },
-      { name: "PhD Collaborator (Princeton)", role: "Algorithm Design" },
-      { name: "PhD Collaborator (UC Riverside)", role: "Algorithm Design" },
+      { name: "Kaya", role: "Princeton PhD", url: "https://kalpturer.github.io/" },
+      { name: "Yunus", role: "UC Riverside PhD", url: "https://cahilfil.xyz/home/index.xml" },
     ],
   },
   {
@@ -152,7 +155,7 @@ export const projects: Project[] = [
     title: "WeatherTimeWidget",
     subtitle: "Weather, Date & Time iOS Widget",
     description: "Noticed no iOS widget combined weather, date, and time in one place - so I built one and went from zero to submitted for Apple review in a single day. Hit #22 on Weather in the App Store.",
-    tech: ["Swift", "WidgetKit", "iOS"],
+    tech: ["Swift", "WidgetKit"],
     image: "/images/projects/wtw_promo.png",
     category: "apps",
     status: "live",
@@ -162,7 +165,8 @@ export const projects: Project[] = [
       "Multiple widget sizes with dark/light theme support",
       "Hourly forecast with fully customizable units",
     ],
-    frontend: "Swift with WidgetKit. Multiple widget size configurations, each with a carefully designed layout. Supports both system dark/light modes with custom theme variations.",
+    backend: "• Multi-API architecture with automatic failover (MGM, NWS, Open-Meteo)\n• App Group shared data layer between the main app and widget extension\n• Smart caching — minimizes API calls with TTL-based refresh and silent background updates\n• Pure Apple stack — SwiftUI, WidgetKit, AppIntents, CoreLocation (no third-party dependencies)",
+    evidence: { src: "/images/projects/wtw_chart.jpeg", caption: "#22 in Weather on the App Store" },
   },
   {
     id: "gym-booking",
@@ -188,7 +192,7 @@ export const projects: Project[] = [
     title: "LaunchSpace",
     subtitle: "Web & AI Applications Company",
     description: "My company's website, built with professional Framer-level design standards.",
-    tech: ["React", "TypeScript", "Node.js", "Vercel"],
+    tech: ["React", "TypeScript", "Node.js", "Vercel", "Framer Motion"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "web",
     status: "live",

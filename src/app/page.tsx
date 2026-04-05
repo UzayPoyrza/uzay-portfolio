@@ -268,7 +268,11 @@ function WebShowcase({ screenshots, title, url }: { screenshots: string[]; title
         </div>
 
         {/* Page content — no transforms, just crossfade */}
-        <div className="relative aspect-[16/10] bg-bg-elevated" style={{ clipPath: "inset(0 round 0 0 0.75rem 0.75rem)" }}>
+        <div
+          className="relative aspect-[16/10] bg-bg-elevated"
+          style={{ clipPath: "inset(0 round 0 0 0.75rem 0.75rem)" }}
+          onClick={() => url && window.open(`https://${url}`, "_blank", "noopener,noreferrer")}
+        >
           {screenshots.map((src, i) => (
             <img
               key={i}
@@ -290,14 +294,14 @@ function WebShowcase({ screenshots, title, url }: { screenshots: string[]; title
 
           {/* Arrows */}
           <button
-            onClick={() => go(-1)}
+            onClick={(e) => { e.stopPropagation(); go(-1); }}
             className="absolute left-3 top-1/2 z-10 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-bg/60 text-text-muted backdrop-blur-sm transition-all hover:bg-accent hover:text-bg"
             aria-label="Previous page"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
           </button>
           <button
-            onClick={() => go(1)}
+            onClick={(e) => { e.stopPropagation(); go(1); }}
             className="absolute right-3 top-1/2 z-10 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-bg/60 text-text-muted backdrop-blur-sm transition-all hover:bg-accent hover:text-bg"
             aria-label="Next page"
           >
@@ -408,9 +412,9 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
           </div>
 
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <h3 className="font-serif text-2xl tracking-tight text-text transition-colors group-hover:text-accent md:text-3xl">
+            <Link href={`/projects/${project.id}`} className="font-serif text-2xl tracking-tight text-text transition-colors hover:text-accent md:text-3xl">
               {project.title}
-            </h3>
+            </Link>
             {(website?.live || project.live) && (
               <a
                 href={website?.live || project.live}
@@ -790,7 +794,7 @@ export default function Home() {
             >
               CS grad from <span className="text-text">Skidmore College</span>.
               I started coding in high school in Japan and never really stopped. Since then, I&apos;ve built tools for Turkish Airlines pilots,
-              e-commerce platforms at <a href="https://www.optimum7.com/" target="_blank" rel="noopener noreferrer" className="text-text underline decoration-text-muted/30 underline-offset-2 hover:text-accent hover:decoration-accent/50 transition-colors">Optimum7</a>, and an AI that beats me at checkers.
+              e-commerce platforms at <span className="text-text">Optimum7</span>, and an AI that beats me at checkers.
             </motion.p>
             <motion.p
               {...fadeUp(2.9)}

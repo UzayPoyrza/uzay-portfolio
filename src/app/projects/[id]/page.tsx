@@ -7,7 +7,6 @@ import Image from "next/image";
 import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { projects, type ProjectStatus } from "@/data/projects";
-import { useTheme } from "@/components/layout/ThemeProvider";
 
 const statusConfig: Record<ProjectStatus, { dot: string; label: string }> = {
   live: { dot: "bg-green-500", label: "Live" },
@@ -50,6 +49,48 @@ function SectionLabel({ children }: { children: string }) {
   );
 }
 
+/* ── Collapsible About ── */
+function AboutCollapsible({ description }: { description: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const words = description.split(" ");
+  const preview = words.slice(0, 12).join(" ");
+  const needsTruncation = words.length > 12;
+
+  return (
+    <Section>
+      <SectionLabel>About</SectionLabel>
+      <p className="text-base leading-relaxed text-text-muted md:text-lg md:leading-relaxed">
+        {needsTruncation && !expanded ? (
+          <>
+            {preview}...{" "}
+            <button
+              onClick={() => setExpanded(true)}
+              className="text-text-muted/50 transition-colors hover:text-accent"
+            >
+              read more
+            </button>
+          </>
+        ) : (
+          <>
+            {description}
+            {needsTruncation && (
+              <>
+                {" "}
+                <button
+                  onClick={() => setExpanded(false)}
+                  className="text-text-muted/50 transition-colors hover:text-accent"
+                >
+                  read less
+                </button>
+              </>
+            )}
+          </>
+        )}
+      </p>
+    </Section>
+  );
+}
+
 /* ── Animated Section ── */
 function Section({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -64,6 +105,132 @@ function Section({ children, className = "", delay = 0 }: { children: React.Reac
     >
       {children}
     </motion.div>
+  );
+}
+
+/* ── Media Gallery ── */
+function MediaGallery({ images }: { images: { src: string; caption: string }[] }) {
+  const [current, setCurrent] = useState(0);
+  const [lightbox, setLightbox] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-40px" });
+
+  const go = (dir: number) => {
+    setCurrent((prev) => (prev + dir + images.length) % images.length);
+  };
+
+  return (
+    <>
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, ease }}
+      className="mx-auto max-w-2xl pb-12"
+    >
+      <SectionLabel>Media</SectionLabel>
+      {/* Main image */}
+      <div
+        className="relative cursor-pointer overflow-hidden rounded-xl border border-border/30 bg-[#0d0d0d] shadow-xl shadow-black/20 max-h-[400px] flex items-center justify-center"
+        onClick={() => setLightbox(true)}
+      >
+        <img
+          src={images[current].src}
+          alt={images[current].caption}
+          className="max-w-full max-h-[400px] object-contain"
+          draggable={false}
+        />
+
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={(e) => { e.stopPropagation(); go(-1); }}
+              className="absolute left-3 top-1/2 z-10 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-accent text-black shadow-lg transition-all hover:brightness-110"
+              aria-label="Previous"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); go(1); }}
+              className="absolute right-3 top-1/2 z-10 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-accent text-black shadow-lg transition-all hover:brightness-110"
+              aria-label="Next"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Thumbnails */}
+      {images.length > 1 && (
+        <div className="mt-3 flex justify-center gap-2">
+          {images.map((img, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrent(i)}
+              className={`overflow-hidden rounded-md border-2 transition-all ${
+                i === current ? "border-accent" : "border-border/30 opacity-50 hover:opacity-80"
+              }`}
+              aria-label={`View ${img.caption}`}
+            >
+              <img
+                src={img.src}
+                alt={img.caption}
+                className="h-14 w-20 object-cover"
+                draggable={false}
+              />
+            </button>
+          ))}
+        </div>
+      )}
+
+      <p className="mt-2 text-center text-[11px] text-text-muted/60">{images[current].caption}</p>
+    </motion.div>
+
+    {/* Lightbox */}
+    {lightbox && (
+      <div
+        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+        onClick={() => setLightbox(false)}
+      >
+        <button
+          onClick={() => setLightbox(false)}
+          className="absolute top-6 right-6 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+          aria-label="Close"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={(e) => { e.stopPropagation(); go(-1); }}
+              className="absolute left-6 top-1/2 z-10 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-black shadow-lg transition-all hover:brightness-110"
+              aria-label="Previous"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); go(1); }}
+              className="absolute right-6 top-1/2 z-10 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-black shadow-lg transition-all hover:brightness-110"
+              aria-label="Next"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+            </button>
+          </>
+        )}
+
+        <img
+          src={images[current].src}
+          alt={images[current].caption}
+          className="max-h-[90vh] max-w-[90vw] object-contain"
+          onClick={(e) => e.stopPropagation()}
+          draggable={false}
+        />
+        <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-sm text-white/60">{images[current].caption}</p>
+      </div>
+    )}
+    </>
   );
 }
 
@@ -94,7 +261,7 @@ function PhoneMockup({ screenshot, title }: { screenshot: string | null; title: 
 
 export default function ProjectPage() {
   const params = useParams();
-  const { theme, toggle } = useTheme();
+
   const project = projects.find((p) => p.id === params.id);
   const [activeScreenshot, setActiveScreenshot] = useState(0);
 
@@ -129,190 +296,57 @@ export default function ProjectPage() {
           </svg>
           All Projects
         </Link>
-        <button
-          onClick={toggle}
-          className="rounded-full border border-border/30 bg-bg/70 p-2.5 text-text-muted backdrop-blur-xl transition-all hover:border-accent/30 hover:text-text"
-          aria-label="Toggle theme"
-        >
-          {theme === "dark" ? (
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="5" />
-              <line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" />
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-              <line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" />
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        {(project.live || pairedWeb?.live) && (
+          <a
+            href={project.live || pairedWeb!.live}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-xs font-medium text-white transition-all hover:shadow-lg hover:shadow-accent/20"
+          >
+            Visit Site
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+              <line x1="7" y1="17" x2="17" y2="7" /><polyline points="7 7 17 7 17 17" />
             </svg>
-          ) : (
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            </svg>
-          )}
-        </button>
+          </a>
+        )}
       </nav>
 
       <main className="mx-auto max-w-5xl px-6 md:px-10">
         {/* ── Hero: Title + Screenshots side by side ── */}
-        <div className={`grid gap-8 pt-24 pb-12 md:pt-28 md:pb-16 ${
-          screenshots.length > 0
-            ? isMobile
-              ? "min-[1440px]:grid-cols-[1fr_auto]"
-              : "min-[1440px]:grid-cols-[1fr_380px]"
-            : ""
-        } items-center`}>
-          {/* Screenshots side - placed first in DOM for web projects so it's on the left */}
-          {screenshots.length > 0 && !isMobile && (
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2, ease }}
-              className="min-[1440px]:order-first order-last"
-            >
-              <div className="space-y-3 min-[1440px]:transition-transform min-[1440px]:duration-500 min-[1440px]:ease-out min-[1440px]:hover:scale-[1.03]">
-                <div className="overflow-hidden rounded-xl border-2 border-border/30 bg-[#1a1a1a] shadow-2xl shadow-black/30">
-                  <div className="flex items-center border-b border-white/5 px-3 py-1.5">
-                    <div className="flex gap-1.5">
-                      <div className="h-2 w-2 rounded-full bg-red-500/50" />
-                      <div className="h-2 w-2 rounded-full bg-yellow-500/50" />
-                      <div className="h-2 w-2 rounded-full bg-green-500/50" />
-                    </div>
-                  </div>
-                  <div className="relative aspect-[16/9] bg-bg-elevated">
-                    <Image
-                      src={screenshots[activeScreenshot]}
-                      alt={`${project.title} screenshot`}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 600px"
-                    />
-                  </div>
-                </div>
-                {screenshots.length > 1 && (
-                  <div className="flex gap-2 justify-center">
-                    {screenshots.map((src, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setActiveScreenshot(i)}
-                        className={`relative overflow-hidden rounded-md border-2 transition-all duration-300 ${
-                          activeScreenshot === i ? "border-accent/60" : "border-border/20 opacity-50 hover:opacity-80"
-                        }`}
-                        style={{ width: 56 }}
-                      >
-                        <div className="relative aspect-[16/9]">
-                          <Image src={src} alt="" fill className="object-cover" sizes="56px" />
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          )}
-
+        <div className="grid gap-4 pt-16 pb-0 md:pt-20 md:pb-0 items-center">
           {/* Text side */}
           <div>
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, ease }}
-              className="mb-4 flex items-center gap-4"
-            >
-              <span className="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-accent">{type}</span>
-            </motion.div>
-
-            <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.1, ease }}
-              className="font-serif text-4xl leading-[1.1] tracking-tight text-text md:text-5xl lg:text-6xl"
             >
-              {project.title}
-            </motion.h1>
-
-            {project.subtitle && (
-              <motion.p
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2, ease }}
-                className="mt-3 max-w-md text-base text-text-muted md:text-lg"
-              >
-                {project.subtitle}
-              </motion.p>
-            )}
-
-            {/* All links */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.35, ease }}
-              className="mt-6 flex flex-wrap items-center gap-2.5"
-            >
-              {project.live && (
-                <a href={project.live} target="_blank" rel="noopener noreferrer"
-                  className="group flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-medium text-white transition-all hover:shadow-lg hover:shadow-accent/20">
-                  Visit Site
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-                    <line x1="7" y1="17" x2="17" y2="7" /><polyline points="7 7 17 7 17 17" />
-                  </svg>
-                </a>
-              )}
-              {project.appStore && (
-                <a href={project.appStore} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 rounded-full border border-border/40 px-4 py-2 text-sm text-text-muted transition-all hover:border-text/20 hover:text-text">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-                  App Store
-                </a>
-              )}
-              {pairedWeb?.live && (
-                <a href={pairedWeb.live} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 rounded-full border border-border/40 px-4 py-2 text-sm text-text-muted transition-all hover:border-text/20 hover:text-text">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                  </svg>
-                  Website
-                </a>
-              )}
-              {project.github && (
-                <a href={project.github} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 rounded-full border border-border/40 px-4 py-2 text-sm text-text-muted transition-all hover:border-text/20 hover:text-text">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                  Source
-                </a>
-              )}
-              {project.extra && (
-                <a href={project.extra} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 rounded-full border border-border/40 px-4 py-2 text-sm text-text-muted transition-all hover:border-text/20 hover:text-text">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
-                  </svg>
-                  Docs
-                </a>
-              )}
-            </motion.div>
-          </div>
-
-          {/* Phone screenshots (mobile apps only) */}
-          {screenshots.length > 0 && isMobile && (
-            <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2, ease }}
-            >
-              <div className="flex justify-center gap-3 md:gap-4">
-                {screenshots.slice(0, 3).map((src, i) => (
-                  <div
-                    key={i}
-                    className="w-[100px] md:w-[130px] shrink-0"
-                    style={{
-                      transform: i === 0 ? "rotate(-6deg) translateY(8px)" : i === 2 ? "rotate(6deg) translateY(8px)" : "none",
-                      zIndex: i === 1 ? 10 : 1,
-                    }}
-                  >
-                    <PhoneMockup screenshot={src} title={project.title} />
-                  </div>
-                ))}
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <h1 className="font-serif text-4xl leading-[1.1] tracking-tight text-text md:text-5xl lg:text-6xl">
+                  {project.title}
+                </h1>
+                {project.subtitle && (
+                  <>
+                    <span className="text-text-muted">·</span>
+                    <p className="text-base text-text-muted md:text-lg">
+                      {project.subtitle}
+                    </p>
+                  </>
+                )}
+                {project.appStore && (
+                  <>
+                    <span className="text-text-muted">·</span>
+                    <a href={project.appStore} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-base text-text-muted transition-colors hover:text-text md:text-lg">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                      App Store
+                    </a>
+                  </>
+                )}
               </div>
             </motion.div>
-          )}
+
+          </div>
+
         </div>
 
         {/* Accent divider */}
@@ -329,12 +363,7 @@ export default function ProjectPage() {
           <div className="space-y-12">
             {/* About */}
             {project.description && (
-              <Section>
-                <SectionLabel>About</SectionLabel>
-                <p className="text-base leading-relaxed text-text-muted md:text-lg md:leading-relaxed">
-                  {project.description}
-                </p>
-              </Section>
+              <AboutCollapsible description={project.description} />
             )}
 
             {/* Highlights */}
@@ -366,7 +395,7 @@ export default function ProjectPage() {
             {project.backend && (
               <Section delay={0.15}>
                 <SectionLabel>Backend & Infrastructure</SectionLabel>
-                <p className="text-sm leading-relaxed text-text-muted">
+                <p className="whitespace-pre-line text-sm leading-relaxed text-text-muted">
                   {project.backend}
                 </p>
               </Section>
@@ -387,10 +416,17 @@ export default function ProjectPage() {
                 </div>
               </Section>
             )}
+
           </div>
 
           {/* ── Sidebar ── */}
           <Section delay={0.1} className="md:sticky md:top-20 md:self-start space-y-8">
+            {/* Type */}
+            <div>
+              <SectionLabel>Type</SectionLabel>
+              <p className="text-sm text-text-muted">{type}</p>
+            </div>
+
             {/* Tech Stack */}
             <div>
               <SectionLabel>Stack</SectionLabel>
@@ -429,18 +465,36 @@ export default function ProjectPage() {
               </div>
             )}
 
-            {/* Details */}
-            <div>
-              <SectionLabel>Details</SectionLabel>
-              <dl className="space-y-3 text-sm">
-                <div>
-                  <dt className="text-[10px] uppercase tracking-wider text-text-muted/50">Type</dt>
-                  <dd className="text-text-muted">{type}</dd>
-                </div>
-              </dl>
-            </div>
+            {/* Source Code */}
+            {project.github && (
+              <div>
+                <SectionLabel>Source Code</SectionLabel>
+                <a
+                  href={project.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-2 text-sm text-text-muted transition-colors hover:text-text"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                  View on GitHub
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                    <line x1="7" y1="17" x2="17" y2="7" /><polyline points="7 7 17 7 17 17" />
+                  </svg>
+                </a>
+              </div>
+            )}
           </Section>
         </div>
+
+        {/* ── Media ── */}
+        {(screenshots.length > 0 || project.evidence) && (
+          <MediaGallery
+            images={[
+              ...screenshots.map((src, i) => ({ src, caption: `${project.title} screenshot ${i + 1}` })),
+              ...(project.evidence ? [{ src: project.evidence.src, caption: project.evidence.caption }] : []),
+            ]}
+          />
+        )}
 
         {/* ── Project navigation ── */}
         <footer className="border-t border-border/20 py-10 md:py-14">
