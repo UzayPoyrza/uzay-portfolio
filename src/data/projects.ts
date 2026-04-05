@@ -236,12 +236,10 @@ export const projects: Project[] = [
     status: "live",
     github: "https://github.com/UzayPoyrza/checker-RL",
     highlights: [
-      "Alpha-beta pruning AI at depth 4 running Python in the browser via Pyodide",
-      "Q-Learning reinforcement learning agent trained from scratch",
-      "Playable directly on the portfolio - no server needed",
+      "Q-tables serialized with pickle so the trained policy loads instantly, no retraining",
+      "Hand-tuned evaluation heuristics for the alpha-beta agent",
     ],
-    frontend: "Interactive board rendered in the browser. Pyodide compiles and runs the Python AI engine client-side - no backend required. Move validation, capture chains, and king promotions all handled in real-time.",
-    backend: "Pure Python AI engine. Alpha-beta pruning with custom evaluation heuristics. Q-Learning agent trained over thousands of self-play games. The entire engine runs in WebAssembly via Pyodide.",
+    backend: "RL agent trained across 10,000+ self-play games using reward shaping and epsilon decay. Benchmarked over 5,000 matches to verify policy convergence and tactical improvement over time.",
   },
 ];
 
