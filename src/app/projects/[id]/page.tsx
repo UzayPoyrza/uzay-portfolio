@@ -6,7 +6,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import dynamic from "next/dynamic";
 import { projects, type ProjectStatus } from "@/data/projects";
+
+const TerminalPlayer = dynamic(() => import("@/components/demos/TerminalPlayer"), { ssr: false });
 
 const statusConfig: Record<ProjectStatus, { dot: string; label: string }> = {
   live: { dot: "bg-green-500", label: "Live" },
@@ -22,7 +25,7 @@ const typeLabels: Record<string, string> = {
 };
 
 const projectScreenshots: Record<string, string[]> = {
-  neurotype: ["/images/projects/neurotype_today.png", "/images/projects/neurotype_progress.png", "/images/projects/neurotype_session.png"],
+  neurotype: ["/images/projects/neurotype_detail_1.png", "/images/projects/neurotype_detail_2.png", "/images/projects/neurotype_detail_3.png", "/images/projects/neurotype_detail_4.png", "/images/projects/neurotype_detail_5.png", "/images/projects/neurotype_detail_6.png", "/images/projects/neurotype_detail_7.png", "/images/projects/neurotype_detail_8.png"],
   volo: ["/images/projects/volo_home.png", "/images/projects/volo_ops.png", "/images/projects/volo_nat.png"],
   "weather-time-widget": ["/images/projects/wtw_promo.png", "/images/projects/wtw_widgets.jpg", "/images/projects/wtw_settings.jpg"],
   launchspace: ["/images/projects/launchspace_home.png", "/images/projects/launchspace_projects.png", "/images/projects/launchspace_contact.png"],
@@ -494,6 +497,26 @@ export default function ProjectPage() {
               ...(project.evidence ? [{ src: project.evidence.src, caption: project.evidence.caption }] : []),
             ]}
           />
+        )}
+
+        {/* ── Terminal Recording ── */}
+        {project.id === "myro" && (
+          <Section className="mx-auto max-w-2xl pb-12">
+            <SectionLabel>Media</SectionLabel>
+            <div className="overflow-hidden rounded-xl border border-border/30 bg-[#0d0d0d] shadow-xl shadow-black/20">
+              <div className="flex items-center gap-2 border-b border-white/[0.06] px-4 py-2.5">
+                <div className="flex gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+                </div>
+                <span className="font-mono text-[10px] text-text-muted/40">myro - ~/competitive</span>
+              </div>
+              <div className="terminal-player-wrapper">
+                <TerminalPlayer src="/recordings/myro.cast" />
+              </div>
+            </div>
+          </Section>
         )}
 
         {/* ── Project navigation ── */}
