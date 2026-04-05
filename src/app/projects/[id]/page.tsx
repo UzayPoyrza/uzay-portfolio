@@ -217,11 +217,6 @@ export default function ProjectPage() {
               className="mb-4 flex items-center gap-4"
             >
               <span className="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-accent">{type}</span>
-              <span className="h-px flex-1 max-w-[60px] bg-border/40" />
-              <span className="flex items-center gap-1.5">
-                <span className={`h-1.5 w-1.5 rounded-full ${status.dot}`} />
-                <span className="text-[10px] text-text-muted">{status.label}</span>
-              </span>
             </motion.div>
 
             <motion.h1
@@ -441,13 +436,6 @@ export default function ProjectPage() {
                 <div>
                   <dt className="text-[10px] uppercase tracking-wider text-text-muted/50">Type</dt>
                   <dd className="text-text-muted">{type}</dd>
-                </div>
-                <div>
-                  <dt className="text-[10px] uppercase tracking-wider text-text-muted/50">Status</dt>
-                  <dd className="flex items-center gap-1.5 text-text-muted">
-                    <span className={`h-1.5 w-1.5 rounded-full ${status.dot}`} />
-                    {status.label}
-                  </dd>
                 </div>
               </dl>
             </div>

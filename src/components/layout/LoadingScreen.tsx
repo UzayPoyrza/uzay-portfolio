@@ -26,16 +26,14 @@ const doneVerbs = ["Crunched", "Baked", "Brewed", "Cooked", "Done"];
 
 const spinFrames = ["|", "/", "-", "\\"];
 
+let hasPlayed = false;
+
 export default function LoadingScreen() {
-  // Show by default - but immediately hide if this is a client-side navigation (back from subpage)
   const [visible, setVisible] = useState(() => {
-    // SSR: default to true, we'll check on client in useEffect
+    if (hasPlayed) return false;
     if (typeof window === "undefined") return true;
-    // If the page was reached via client-side navigation (back_forward or soft nav),
-    // the performance entry type will be different from "navigate"/"reload"
     const navEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
     const navType = navEntry?.type;
-    // Show spinner on fresh loads ("navigate") and reloads ("reload"), skip on back/forward
     return navType === "navigate" || navType === "reload";
   });
   const [phase, setPhase] = useState<"loading" | "done">("loading");
@@ -71,7 +69,10 @@ export default function LoadingScreen() {
     }, 2000);
 
     // Fade out
-    const hideTimer = setTimeout(() => setVisible(false), 2600);
+    const hideTimer = setTimeout(() => {
+      setVisible(false);
+      hasPlayed = true;
+    }, 2600);
 
     return () => {
       clearInterval(spinInterval);

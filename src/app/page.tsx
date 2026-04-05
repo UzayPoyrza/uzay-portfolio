@@ -22,11 +22,11 @@ const terminalRecordings: Record<string, string> = {
   myro: "/recordings/myro.cast",
 };
 
-const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, delay, ease: "easeOut" as const },
-});
+let hasVisited = false;
+
+const fadeUp = (delay = 0) => hasVisited
+  ? { initial: { opacity: 1, y: 0 }, animate: { opacity: 1, y: 0 } }
+  : { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.6, delay, ease: "easeOut" as const } };
 
 const navLinks = [
   { label: "ABOUT", href: "#about" },
@@ -157,10 +157,10 @@ function PhoneShowcase({ screenshots, title }: { screenshots: string[]; title: s
               className="cursor-pointer"
               style={{
                 width: currentW,
-                opacity: !inView ? 0 : isDimmed ? 0.5 : 1,
+                opacity: (!hasVisited && !inView) ? 0 : isDimmed ? 0.5 : 1,
                 transform: needsRotate ? `rotate(${phone.rotate}deg)` : "none",
                 transition: "width 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
-                transitionDelay: inView ? "0s" : phone.delay,
+                transitionDelay: (hasVisited || inView) ? "0s" : phone.delay,
               }}
               onMouseEnter={() => setHovered(i)}
             >
@@ -334,8 +334,8 @@ function TerminalShowcase({ title, castFile }: { title: string; castFile?: strin
     <div
       ref={ref}
       style={{
-        opacity: inView ? 1 : 0,
-        transition: "opacity 0.6s ease",
+        opacity: (hasVisited || inView) ? 1 : 0,
+        transition: hasVisited ? undefined : "opacity 0.6s ease",
       }}
     >
       <div className="rounded-xl border border-border/40 bg-[#0d1117] shadow-2xl shadow-black/30">
@@ -382,9 +382,9 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 60 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, delay: 0.1, ease }}
+      initial={hasVisited ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
+      animate={(hasVisited || inView) ? { opacity: 1, y: 0 } : {}}
+      transition={hasVisited ? undefined : { duration: 0.8, delay: 0.1, ease }}
       transformTemplate={({ y }) => y && y !== "0px" && y !== 0 ? `translateY(${y})` : "none"}
       className="group rounded-2xl border border-border/30 bg-bg-elevated/10 p-6 transition-colors duration-300 hover:border-accent/15 hover:bg-bg-elevated/20 md:p-8"
     >
@@ -405,13 +405,9 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
             <span className="font-mono text-[10px] font-medium uppercase tracking-[0.15em] text-accent">
               {showingWeb ? "Website" : type}
             </span>
-            <span className="flex items-center gap-1.5">
-              <span className={`h-1.5 w-1.5 rounded-full ${status.dot}`} />
-              <span className="text-[10px] text-text-muted">{status.label}</span>
-            </span>
           </div>
 
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <h3 className="font-serif text-2xl tracking-tight text-text transition-colors group-hover:text-accent md:text-3xl">
               {project.title}
             </h3>
@@ -476,9 +472,9 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
 
         {/* Device mockup side */}
         <motion.div
-          initial={{ opacity: 0, x: isEven ? 60 : -60 }}
-          animate={inView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.9, delay: 0.25, ease }}
+          initial={hasVisited ? { opacity: 1, x: 0 } : { opacity: 0, x: isEven ? 60 : -60 }}
+          animate={(hasVisited || inView) ? { opacity: 1, x: 0 } : {}}
+          transition={hasVisited ? undefined : { duration: 0.9, delay: 0.25, ease }}
           transformTemplate={({ x }) => x && x !== "0px" && x !== 0 ? `translateX(${x})` : "none"}
           className={`flex flex-1 flex-col items-center gap-4 min-w-0 ${isTerminal ? "" : "overflow-visible"}`}
         >
@@ -627,6 +623,10 @@ export default function Home() {
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll, { passive: true });
+    if (!hasVisited) {
+      const timer = setTimeout(() => { hasVisited = true; }, 3000);
+      return () => { clearTimeout(timer); window.removeEventListener("scroll", onScroll); };
+    }
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -700,15 +700,15 @@ export default function Home() {
       >
         <div>
             <motion.h1
-              initial={{ opacity: 0, y: 30 }}
+              initial={hasVisited ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 2.3, duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+              transition={hasVisited ? undefined : { delay: 2.7, duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
               className="font-serif text-5xl tracking-tight lg:text-6xl"
             >
               Uzay Poyraz
             </motion.h1>
             <motion.p
-              {...fadeUp(2.5)}
+              {...fadeUp(2.8)}
               className="mt-3 text-lg text-text-muted"
             >
               i build things, break things, and occasionally ship them.
@@ -716,7 +716,7 @@ export default function Home() {
 
             {/* Nav links with lines */}
             <motion.nav
-              {...fadeUp(2.7)}
+              {...fadeUp(2.9)}
               className="mt-12 hidden md:block"
             >
               <ul className="flex flex-col gap-4">
@@ -746,7 +746,7 @@ export default function Home() {
 
           {/* Social icons + theme toggle */}
           <motion.div
-            {...fadeUp(2.9)}
+            {...fadeUp(3.0)}
             className="mt-8 flex items-center gap-5 pb-6 md:mt-0 md:pb-0"
           >
             <a href={personal.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-text-muted transition-colors hover:text-text">
@@ -785,7 +785,7 @@ export default function Home() {
           {/* About */}
           <section id="about" className="mb-24">
             <motion.p
-              {...fadeUp(2.5)}
+              {...fadeUp(2.8)}
               className="leading-relaxed text-text-muted"
             >
               CS grad from <span className="text-text">Skidmore College</span>.
@@ -793,7 +793,7 @@ export default function Home() {
               e-commerce platforms at <a href="https://www.optimum7.com/" target="_blank" rel="noopener noreferrer" className="text-text underline decoration-text-muted/30 underline-offset-2 hover:text-accent hover:decoration-accent/50 transition-colors">Optimum7</a>, and an AI that beats me at checkers.
             </motion.p>
             <motion.p
-              {...fadeUp(2.6)}
+              {...fadeUp(2.9)}
               className="mt-4 leading-relaxed text-text-muted"
             >
               I thought that was cool until vibe coding showed up. These days I&apos;ve got{" "}
@@ -802,18 +802,17 @@ export default function Home() {
               <span className="text-text">skills</span> loaded.
               I love building things nobody&apos;s built before - it means designing
               UIs that feel intuitive with no reference point and solving unique engineering problems.
-              Under <span className="text-text">LaunchSpace</span> I&apos;ve taken every product from zero to launch, focusing on performance, beautiful UIs and having real-world impact.
-              Volo and Neurotype are awaiting Apple review, the rest you can use right now.
+              Under <span className="text-text">LaunchSpace</span> I&apos;ve taken every product from zero to launch, focusing on performance, beautiful UIs and having real-world impact. Try them below.
             </motion.p>
           </section>
 
           {/* Projects */}
           <section id="projects" className="mb-24">
-            <motion.h2 {...fadeUp(2.7)} className="mb-2 font-serif text-3xl text-accent">
+            <motion.h2 {...fadeUp(3.0)} className="mb-2 font-serif text-3xl text-accent">
               stuff i&apos;ve built
             </motion.h2>
-            <motion.p {...fadeUp(2.8)} className="mb-8 text-sm text-text-muted">
-              some shipped, some still cooking, some vibecoded, some not
+            <motion.p {...fadeUp(3.1)} className="mb-8 text-sm text-text-muted">
+              all launched. some vibecoded, some not
             </motion.p>
 
             <div className="space-y-8">
