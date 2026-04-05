@@ -198,11 +198,7 @@ export const projects: Project[] = [
     status: "live",
     github: "https://github.com/UzayPoyrza/LaunchSpace",
     live: "https://launchspace.org",
-    highlights: [
-      "Company website for LaunchSpace - web & AI applications company",
-      "Clean, minimal design built with early Cursor",
-    ],
-    frontend: "React with TypeScript. Component-based architecture deployed on Vercel. Responsive design with smooth scroll animations.",
+    frontend: "Started by using Claude's computer-use to clone a site I liked, then rebuilt it with a space-inspired theme and Framer Motion. Smooth scroll-driven animations, parallax effects, and transitions throughout. Migrated to Node.js for performance. Deployed on Vercel.",
   },
   {
     id: "neurotype-web",
