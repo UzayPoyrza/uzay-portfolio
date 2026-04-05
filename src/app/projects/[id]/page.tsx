@@ -26,7 +26,7 @@ const typeLabels: Record<string, string> = {
 
 const projectScreenshots: Record<string, string[]> = {
   neurotype: ["/images/projects/neurotype_detail_1.png", "/images/projects/neurotype_detail_2.png", "/images/projects/neurotype_detail_3.png", "/images/projects/neurotype_detail_4.png", "/images/projects/neurotype_detail_5.png", "/images/projects/neurotype_detail_6.png", "/images/projects/neurotype_detail_7.png", "/images/projects/neurotype_detail_8.png"],
-  volo: ["/images/projects/volo_home.png", "/images/projects/volo_ops.png", "/images/projects/volo_nat.png"],
+  volo: ["/images/projects/volo_home.png", "/images/projects/volo_ops.png", "/images/projects/volo_nat.png", "/images/projects/volo_acquisition.png"],
   "weather-time-widget": ["/images/projects/wtw_promo.png", "/images/projects/wtw_widgets.jpg", "/images/projects/wtw_settings.jpg"],
   launchspace: ["/images/projects/launchspace_home.png", "/images/projects/launchspace_projects.png", "/images/projects/launchspace_contact.png"],
   incraft: ["/images/projects/incraft_home.png", "/images/projects/incraft_create.png", "/images/projects/incraft_studio.png"],
