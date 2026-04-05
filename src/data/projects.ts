@@ -54,7 +54,7 @@ export const projects: Project[] = [
     id: "volo",
     title: "Volo",
     subtitle: "Toolkit for Airline Pilots",
-    description: "When I was 12, I had the chance to sit in a cockpit and noticed how many calculations pilots still did by hand. It became one of the first real problems I wanted to solve with software. I built Volo in collaboration with active airline pilots to directly identify and address pain points in the cockpit. For part of the process, I deployed a self-hosted OpenClaw agent on WhatsApp to make the connection between their domain experience and my development seamless. Together, we brought 30 minutes of preflight prep down to under a minute. 200 pilots started using it from day one, many skipping free trials to go straight to paid.",
+    description: "When I was 12, I had the chance to sit in a cockpit and noticed how many calculations pilots still did by hand. It became one of the first real problems I wanted to solve with software. I built Volo in collaboration with active airline pilots to directly identify and address pain points in the cockpit. For part of the process, I deployed a self-hosted OpenClaw agent on WhatsApp to make the connection between their domain experience and my development seamless. Together, we brought 30 minutes of preflight prep down to under a minute. 200+ pilots started using it from day one, many skipping free trials to go straight to paid.",
     tech: ["React Native", "TypeScript", "Supabase"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "apps",
