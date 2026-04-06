@@ -56,6 +56,7 @@ export const projects: Project[] = [
     backend: "• Supabase for auth (Google/Apple OAuth), database (PostgreSQL with RLS), and real-time sync\n• AI session generation pipeline: GPT Pro extracts techniques from research papers, maps them into 37 session formats across 20 internal protocol families, generates protocol-specific rules from difficulty, safety constraints, and evidence tiers, then compiles into custom XML with multi-level pause semantics and skip markers\n• Downstream audio stack converts XML session specs into TTS outputs via ElevenLabs and Inworld, matches approved sounds through a protocol-aware multi-stage LLM pipeline\n• Terminal-based mix/master chains built with sound engineers using FFmpeg and FabFilter for scalable production-grade audio output\n• Analytics-driven personalization using weighted engagement signals to adapt recommendations\n• Cloudflare R2 for audio storage and delivery\n• StoreKit 2 for subscriptions (free with limited modules, 21-day trial, $2.99/mo or $24.99/yr)",
     collaborators: [
       { name: "Uzay Poyraz", role: "Everything" },
+      { name: "Efe P.", role: "Sound Engineer" },
     ],
   },
   {
