@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import dynamic from "next/dynamic";
 import { projects, type ProjectStatus } from "@/data/projects";
@@ -56,8 +56,8 @@ function SectionLabel({ children }: { children: string }) {
 function AboutCollapsible({ description }: { description: string }) {
   const [expanded, setExpanded] = useState(false);
   const words = description.split(" ");
-  const preview = words.slice(0, 12).join(" ");
-  const needsTruncation = words.length > 12;
+  const preview = words.slice(0, 40).join(" ");
+  const needsTruncation = words.length > 40;
 
   return (
     <Section>
@@ -116,11 +116,24 @@ function MediaGallery({ images }: { images: { src: string; caption: string }[] }
   const [current, setCurrent] = useState(0);
   const [lightbox, setLightbox] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-40px" });
 
   const go = (dir: number) => {
     setCurrent((prev) => (prev + dir + images.length) % images.length);
   };
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (images.length <= 1) return;
+      if (e.key === "ArrowLeft") go(-1);
+      else if (e.key === "ArrowRight") go(1);
+      else if (e.key === "Escape" && lightbox) setLightbox(false);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  });
 
   return (
     <>
@@ -130,8 +143,14 @@ function MediaGallery({ images }: { images: { src: string; caption: string }[] }
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, ease }}
       className="mx-auto max-w-2xl pb-12"
+      tabIndex={0}
     >
-      <SectionLabel>Media</SectionLabel>
+      <div className="flex items-baseline justify-between">
+        <SectionLabel>Media</SectionLabel>
+        {images.length > 1 && (
+          <span className="text-[11px] text-text-muted/50">{current + 1}/{images.length}</span>
+        )}
+      </div>
       {/* Main image */}
       <div
         className="relative cursor-pointer overflow-hidden rounded-xl border border-border/30 bg-[#0d0d0d] shadow-xl shadow-black/20 max-h-[400px] flex items-center justify-center"
@@ -230,7 +249,12 @@ function MediaGallery({ images }: { images: { src: string; caption: string }[] }
           onClick={(e) => e.stopPropagation()}
           draggable={false}
         />
-        <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-sm text-white/60">{images[current].caption}</p>
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1">
+          {images.length > 1 && (
+            <span className="text-xs text-white/40">{current + 1} / {images.length}</span>
+          )}
+          <p className="text-sm text-white/60">{images[current].caption}</p>
+        </div>
       </div>
     )}
     </>
@@ -315,10 +339,10 @@ export default function ProjectPage() {
       </nav>
 
       <main className="mx-auto max-w-5xl px-6 md:px-10">
-        {/* ── Hero: Title + Screenshots side by side ── */}
-        <div className="grid gap-4 pt-16 pb-0 md:pt-20 md:pb-0 items-center">
+        {/* ── Hero: Title + Hero Screenshot ── */}
+        <div className="flex flex-col-reverse gap-8 pt-16 pb-0 md:flex-row md:items-end md:pt-20 md:pb-0">
           {/* Text side */}
-          <div>
+          <div className="flex-1">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -347,9 +371,32 @@ export default function ProjectPage() {
                 )}
               </div>
             </motion.div>
-
           </div>
 
+          {/* Hero screenshot */}
+          {screenshots.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2, ease }}
+              className="shrink-0"
+            >
+              {isMobile ? (
+                <div className="mx-auto w-[120px] md:w-[130px]">
+                  <PhoneMockup screenshot={screenshots[0]} title={project.title} />
+                </div>
+              ) : (
+                <div className="w-full overflow-hidden rounded-lg border border-border/30 shadow-xl shadow-black/20 md:w-[260px]">
+                  <img
+                    src={screenshots[0]}
+                    alt={project.title}
+                    className="w-full object-cover"
+                    draggable={false}
+                  />
+                </div>
+              )}
+            </motion.div>
+          )}
         </div>
 
         {/* Accent divider */}
@@ -357,7 +404,7 @@ export default function ProjectPage() {
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ duration: 1, delay: 0.4, ease }}
-          className="h-px origin-left bg-gradient-to-r from-accent/40 via-border/30 to-transparent"
+          className="mt-6 h-px origin-left bg-gradient-to-r from-accent/40 via-border/30 to-transparent"
         />
 
         {/* ── Content grid ── */}

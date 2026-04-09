@@ -28,11 +28,24 @@ const spinFrames = ["|", "/", "-", "\\"];
 
 let hasPlayed = false;
 
+function checkPlayed() {
+  if (hasPlayed) return true;
+  try {
+    return sessionStorage.getItem("loadingPlayed") === "1";
+  } catch {
+    return false;
+  }
+}
+
+function markPlayed() {
+  hasPlayed = true;
+  try {
+    sessionStorage.setItem("loadingPlayed", "1");
+  } catch {}
+}
+
 export default function LoadingScreen() {
-  const [visible, setVisible] = useState(() => {
-    if (hasPlayed) return false;
-    return true;
-  });
+  const [visible, setVisible] = useState(() => !checkPlayed());
   const [phase, setPhase] = useState<"loading" | "done">("loading");
   const [verb, setVerb] = useState("");
   const [doneVerb, setDoneVerb] = useState("");
@@ -68,7 +81,7 @@ export default function LoadingScreen() {
     // Fade out
     const hideTimer = setTimeout(() => {
       setVisible(false);
-      hasPlayed = true;
+      markPlayed();
     }, 2600);
 
     return () => {
@@ -85,7 +98,8 @@ export default function LoadingScreen() {
         <motion.div
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="fixed inset-0 z-[10000] flex items-center justify-center bg-[#0c0c0c]"
+          className="fixed inset-0 z-[10000] flex cursor-pointer items-center justify-center bg-[#0c0c0c]"
+          onClick={() => { setVisible(false); markPlayed(); }}
         >
           {phase === "loading" ? (
             <p className="font-mono text-sm">
