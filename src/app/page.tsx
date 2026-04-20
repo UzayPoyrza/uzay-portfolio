@@ -68,7 +68,7 @@ const websitePairs: Record<string, string> = {
   volo: "volo-web",
 };
 const pairedWebsiteIds = new Set(Object.values(websitePairs));
-const legacyProjectIds = new Set(["aviaassist", "gym-booking"]);
+const legacyProjectIds = new Set(["aviaassist", "gym-booking", "checkers-ai"]);
 
 interface ProjectGroup {
   primary: (typeof projects)[number];
