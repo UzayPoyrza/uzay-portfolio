@@ -373,30 +373,6 @@ export default function ProjectPage() {
             </motion.div>
           </div>
 
-          {/* Hero screenshot */}
-          {screenshots.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2, ease }}
-              className="shrink-0"
-            >
-              {isMobile ? (
-                <div className="mx-auto w-[120px] md:w-[130px]">
-                  <PhoneMockup screenshot={screenshots[0]} title={project.title} />
-                </div>
-              ) : (
-                <div className="w-full overflow-hidden rounded-lg border border-border/30 shadow-xl shadow-black/20 md:w-[260px]">
-                  <img
-                    src={screenshots[0]}
-                    alt={project.title}
-                    className="w-full object-cover"
-                    draggable={false}
-                  />
-                </div>
-              )}
-            </motion.div>
-          )}
         </div>
 
         {/* Accent divider */}

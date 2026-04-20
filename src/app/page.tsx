@@ -375,6 +375,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const [view, setView] = useState<"app" | "web" | "demo">("app");
+  const [descExpanded, setDescExpanded] = useState(false);
   const isEven = index % 2 === 0;
   const isMobile = project.category === "apps";
   const isTerminal = project.category === "cli";
@@ -412,8 +413,9 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
           </div>
 
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <Link href={`/projects/${project.id}`} className="font-serif text-2xl tracking-tight text-text transition-colors hover:text-accent md:text-3xl">
+            <Link href={`/projects/${project.id}`} className="group/title relative font-serif text-2xl tracking-tight text-text transition-colors hover:text-accent md:text-3xl">
               {project.title}
+              <span className="pointer-events-none absolute -bottom-7 left-0 whitespace-nowrap rounded bg-bg-elevated px-2 py-1 font-sans text-[10px] font-normal text-text-muted opacity-0 shadow-lg ring-1 ring-border transition-opacity group-hover/title:opacity-100">See details</span>
             </Link>
             {(website?.live || project.live) && (
               <a
@@ -443,13 +445,19 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
             <p className="text-sm text-text-muted">{project.subtitle}</p>
           )}
 
-          {project.description && (
-            <p className="text-sm leading-relaxed text-text-muted/70">
-              {project.description.split(" ").length > 30
-                ? project.description.split(" ").slice(0, 30).join(" ") + "..."
-                : project.description}
-            </p>
-          )}
+          {project.description && (() => {
+            const renderBold = (text: string) =>
+              text.split(/(\*\*.*?\*\*)/).map((part, i) =>
+                part.startsWith("**") && part.endsWith("**")
+                  ? <span key={i} className="text-text">{part.slice(2, -2)}</span>
+                  : part
+              );
+            return (
+              <p className="text-sm leading-relaxed text-text-muted/70">
+                {renderBold(project.description)}
+              </p>
+            );
+          })()}
 
           <div className="flex flex-wrap gap-1.5 pt-1">
             {project.tech.map((t) => (
@@ -766,14 +774,17 @@ export default function Home() {
             {...fadeUp(3.0)}
             className="mt-8 flex items-center gap-5 pb-6 md:mt-0 md:pb-0"
           >
-            <a href={personal.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-text-muted transition-colors hover:text-text">
+            <a href={personal.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="group relative text-text-muted transition-colors hover:text-text">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-bg-elevated px-2 py-1 text-[10px] text-text-muted opacity-0 shadow-lg ring-1 ring-border transition-opacity group-hover:opacity-100">GitHub</span>
             </a>
-            <a href={personal.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-text-muted transition-colors hover:text-text">
+            <a href={personal.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="group relative text-text-muted transition-colors hover:text-text">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-bg-elevated px-2 py-1 text-[10px] text-text-muted opacity-0 shadow-lg ring-1 ring-border transition-opacity group-hover:opacity-100">LinkedIn</span>
             </a>
-            <a href={`mailto:${personal.email}`} aria-label="Email" className="text-text-muted transition-colors hover:text-text">
+            <a href={`mailto:${personal.email}`} aria-label="Email" className="group relative text-text-muted transition-colors hover:text-text">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-bg-elevated px-2 py-1 text-[10px] text-text-muted opacity-0 shadow-lg ring-1 ring-border transition-opacity group-hover:opacity-100">Email</span>
             </a>
 
             <span className="h-4 w-px bg-border" />
@@ -781,25 +792,25 @@ export default function Home() {
             <button
               onClick={toggle}
               aria-label="Toggle theme"
-              className="text-text-muted transition-colors hover:text-text"
+              className="group relative text-text-muted transition-colors hover:text-text"
             >
               {theme === "dark" ? (
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
               ) : (
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
               )}
+              <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-bg-elevated px-2 py-1 text-[10px] text-text-muted opacity-0 shadow-lg ring-1 ring-border transition-opacity group-hover:opacity-100">{theme === "dark" ? "Light mode" : "Dark mode"}</span>
             </button>
-
-            <span className="h-4 w-px bg-border" />
 
             <a
               href={personal.resume}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-sm text-accent transition-colors hover:text-accent-hover"
+              aria-label="Resume"
+              className="group relative text-text-muted transition-colors hover:text-accent"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-              Resume
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-bg-elevated px-2 py-1 text-[10px] text-text-muted opacity-0 shadow-lg ring-1 ring-border transition-opacity group-hover:opacity-100">Resume</span>
             </a>
           </motion.div>
       </header>
