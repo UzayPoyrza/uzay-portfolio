@@ -738,12 +738,28 @@ export default function Home() {
             >
               Uzay Poyraz
             </motion.h1>
-            <motion.p
+            <motion.a
+              href={`mailto:${personal.email}`}
               {...fadeUp(2.8)}
-              className="mt-3 text-lg text-text-muted"
+              className="group mt-3 inline-flex items-center gap-2 text-lg text-text-muted transition-colors hover:text-accent"
             >
-              i build things, break things, and occasionally ship them.
-            </motion.p>
+              send me cool engineering problems
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                aria-hidden="true"
+              >
+                <path d="M7 17 17 7" />
+                <path d="M7 7h10v10" />
+              </svg>
+            </motion.a>
 
             {/* Nav links with lines */}
             <motion.nav
@@ -835,19 +851,16 @@ export default function Home() {
               className="leading-relaxed text-text-muted"
             >
               CS grad from <span className="text-text">Skidmore College</span>.
-              I started coding in high school in Japan and never really stopped. Since then, I&apos;ve built tools for Turkish Airlines pilots,
-              e-commerce platforms at <span className="text-text">Optimum7</span>, and an AI that beats me at checkers.
+              I started coding in high school in Japan and never really stopped. Before AI, I was building tools for Turkish Airlines pilots,
+              e-commerce platforms at <span className="text-text">Optimum7</span>, and RL agents that beat me at board games.
             </motion.p>
             <motion.p
               {...fadeUp(2.9)}
               className="mt-4 leading-relaxed text-text-muted"
             >
-              I thought that was cool until vibe coding showed up. These days I&apos;ve got{" "}
-              <span className="text-text">Claude Code CLI</span> terminals running at all times with{" "}
-              <span className="text-text">MCPs</span> and custom{" "}
-              <span className="text-text">skills</span> loaded.
-              I love building things nobody&apos;s built before - it means designing
-              UIs that feel intuitive with no reference point and solving unique engineering problems.
+              Now with AI, I get to spend more time on the part I enjoy most: engineering the architecture
+              behind unique problems and turning ideas that do not have an obvious reference point into real products.
+              I&apos;m a firm believer that AI should not do the thinking - it should help you move faster once the thinking is clear.
               Under <span className="text-text">LaunchSpace</span> I&apos;ve taken every product from zero to launch, focusing on performance, beautiful UIs and having real-world impact. Try them below.
             </motion.p>
           </section>
