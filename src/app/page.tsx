@@ -867,12 +867,9 @@ export default function Home() {
 
           {/* Projects */}
           <section id="projects" className="mb-24">
-            <motion.h2 {...fadeUp(3.0)} className="mb-2 font-serif text-3xl text-accent">
+            <motion.h2 {...fadeUp(3.0)} className="mb-8 font-serif text-3xl text-accent">
               stuff i&apos;ve built
             </motion.h2>
-            <motion.p {...fadeUp(3.1)} className="mb-8 text-sm text-text-muted">
-              all launched. some vibecoded, some not
-            </motion.p>
 
             <div className="space-y-8">
               {projectGroups.map((group, i) => (
