@@ -980,7 +980,7 @@ export default function Home() {
 
           {/* Experience */}
           <section id="experience" className="mb-24">
-            <motion.h2 {...fadeUp(3.1)} className="mb-8 font-serif text-3xl">
+            <motion.h2 {...fadeUp(3.1)} className="mb-8 font-serif text-3xl text-accent">
               jobs / internships
             </motion.h2>
             <div className="space-y-8">
@@ -1008,7 +1008,7 @@ export default function Home() {
 
           {/* Education */}
           <section className="mb-24">
-            <motion.h2 {...fadeUp(3.3)} className="mb-8 font-serif text-3xl">
+            <motion.h2 {...fadeUp(3.3)} className="mb-8 font-serif text-3xl text-accent">
               education
             </motion.h2>
             <div className="space-y-8">
