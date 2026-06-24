@@ -451,7 +451,8 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
             <p className="text-sm text-text-muted">{project.subtitle}</p>
           )}
 
-          {project.description && (() => {
+          {(project.summary || project.description) && (() => {
+            const cardDescription = project.summary ?? project.description;
             const renderBold = (text: string) =>
               text.split(/(\*\*.*?\*\*)/).map((part, i) =>
                 part.startsWith("**") && part.endsWith("**")
@@ -460,7 +461,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
               );
             return (
               <p className="light-readable-muted text-sm leading-relaxed text-text-muted/80">
-                {renderBold(project.description)}
+                {renderBold(cardDescription)}
               </p>
             );
           })()}

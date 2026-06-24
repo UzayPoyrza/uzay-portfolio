@@ -11,6 +11,7 @@ export interface Project {
   title: string;
   subtitle: string;
   description: string;
+  summary?: string;
   tech: string[];
   image: string;
   category: "apps" | "ai" | "web" | "cli";
@@ -33,6 +34,7 @@ export const projects: Project[] = [
     title: "Neurotype",
     subtitle: "Science-based meditation & CBT app",
     description: "I started Neurotype after hearing Harvard-trained psychiatrist Dr. K talk about how different minds respond to different meditation styles. Someone with ADHD may benefit more from sound or movement sessions than a long body scan - but every meditation app still treats everyone the same. So I built one that doesn't. Neurotype uses AI to turn research across ADHD, anxiety, sleep, and more into full guided meditation and CBT sessions, then adapts recommendations based on what each user responds to best.",
+    summary: "Meditation app that personalizes sessions by condition and technique response instead of treating every user the same. Built the recommendation system, session pipeline, subscription flow, offline caching, and polished mobile UX.",
     tech: ["React Native (Expo)", "Supabase (PostgreSQL)", "FFmpeg", "StoreKit 2", "ElevenLabs", "Cloudflare R2", "GPT Pro Research"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "apps",
@@ -64,6 +66,7 @@ export const projects: Project[] = [
     title: "Volo",
     subtitle: "Toolkit for Airline Pilots",
     description: "Built with airline pilots to automate 9 pre-departure workflows, saving roughly **30 minutes per flight**. Used a self-hosted OpenClaw agent over Tailscale and WhatsApp to bridge pilot expertise with development. 170+ pilots from day one, many skipping free trials to go straight to paid.",
+    summary: "Pilot toolkit that automates 9 pre-departure workflows and saves roughly **30 minutes per flight**. Launched with 170+ pilots from day one, with offline-first tools, PDF exports, and cockpit-focused UX.",
     tech: ["React Native", "TypeScript", "Supabase"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "apps",
@@ -91,6 +94,7 @@ export const projects: Project[] = [
     title: "Incraft",
     subtitle: "AI Guided Meditation Generator & Studio",
     description: "Incraft gives content creators and therapists human-like and highly scientifically accurate guided meditation and CBT sessions from a single prompt. Multi-stage LLM pipelines generate a custom session with pacing, structure, and safety constraints that are used in actual matching scientific papers. Soundscapes are intelligently ranked and matched according to session protocol and generated content. The audio is then mixed and mastered through automated workflows created in collaboration with audio engineers. Additional dashboard and studio controls give fine-grained control over every layer.",
+    summary: "Web platform that turns a prompt into scientifically structured meditation and CBT audio. Designed the LLM pipeline, studio editor, billing, analytics, and automated mix/master workflow with audio engineers.",
     tech: ["Next.js", "Stripe", "AWS Lambda", "ElevenLabs", "Supabase", "PostHog", "Python", "OpenRouter"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "web",
@@ -115,6 +119,7 @@ export const projects: Project[] = [
     title: "Myro",
     subtitle: "Competitive Programming Coach",
     description: "Open-source project with a PhD friend from Princeton and UC Riverside. Myro turns your terminal into a competitive programming gym - it pulls problems from Codeforces, predicts which ones match your skill level using a logistic matrix factorization model, and coaches you through with Socratic hints, not answers. Think Anki meets Codeforces, inside a terminal.",
+    summary: "Open-source terminal coach for competitive programming. Uses Codeforces data, a logistic matrix factorization model, and Socratic LLM hints to recommend problems and help users improve without giving away answers.",
     tech: ["Rust", "Ratatui", "Web Scraping", "LLMs", "Supabase"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "cli",
@@ -170,6 +175,7 @@ export const projects: Project[] = [
     title: "WeatherTimeWidget",
     subtitle: "Weather, Date & Time iOS Widget",
     description: "Noticed no iOS widget combined weather, date, and time in one place - so I built one and went from zero to submitted for Apple review in a single day. Hit #22 on Weather in the App Store.",
+    summary: "iOS widget combining weather, date, and time in one glance. Built and submitted in a day, with multi-source weather failover, App Group data sharing, smart caching, and a #22 Weather ranking.",
     tech: ["Swift", "WidgetKit"],
     image: "/images/projects/wtw_promo.png",
     category: "apps",
@@ -207,6 +213,7 @@ export const projects: Project[] = [
     title: "LaunchSpace",
     subtitle: "Web & AI Applications Company",
     description: "My company's website, built with professional Framer-level design standards.",
+    summary: "Company site for my web and AI application work. Built as a polished, animation-heavy landing page with a space-inspired visual system and production deployment on Vercel.",
     tech: ["React", "TypeScript", "Node.js", "Vercel", "Framer Motion"],
     image: "/images/projects/aviaassist_thumbnail.png",
     category: "web",
