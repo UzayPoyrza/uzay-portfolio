@@ -22,8 +22,8 @@ export default function Hero() {
 
   return (
     <section className="relative flex min-h-screen flex-col items-center justify-center px-6">
-      {/* Warm gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0c0c0c] via-[#110e0c] to-[#0c0c0c]" />
+      {/* Subtle page backdrop */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#05070a] via-[#0d1117] to-[#05070a]" />
 
       <div className="relative z-10 text-center">
         {/* Name */}

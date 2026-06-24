@@ -17,10 +17,10 @@ export default function CustomCursor() {
         style={{
           left: x,
           top: y,
-          width: 400,
-          height: 400,
+          width: 320,
+          height: 320,
           background:
-            "radial-gradient(circle, rgba(196,93,62,0.06) 0%, rgba(196,93,62,0.02) 40%, transparent 70%)",
+            "radial-gradient(circle, rgba(79,156,255,0.055) 0%, rgba(79,156,255,0.018) 42%, transparent 72%)",
           transition: "left 0.15s ease-out, top 0.15s ease-out",
         }}
       />

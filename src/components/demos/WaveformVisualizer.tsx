@@ -38,7 +38,7 @@ export default function WaveformVisualizer({
         analyser.getByteTimeDomainData(dataArray);
 
         ctx.lineWidth = 2;
-        ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#c45d3e";
+        ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#4f9cff";
         ctx.beginPath();
 
         const sliceWidth = w / bufferLength;

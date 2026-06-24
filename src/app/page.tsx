@@ -5,7 +5,6 @@ import { motion, AnimatePresence, useInView } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import CustomCursor from "@/components/layout/CustomCursor";
-import LoadingScreen from "@/components/layout/LoadingScreen";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { personal } from "@/data/personal";
@@ -24,9 +23,17 @@ const terminalRecordings: Record<string, string> = {
 
 let hasVisited = false;
 
+function introDelay(delay = 0) {
+  return delay > 1 ? Math.max(0, (delay - 2.7) * 0.12) : delay;
+}
+
 const fadeUp = (delay = 0) => hasVisited
   ? { initial: { opacity: 1, y: 0 }, animate: { opacity: 1, y: 0 } }
-  : { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.6, delay, ease: "easeOut" as const } };
+  : {
+      initial: { opacity: 0, y: 16 },
+      animate: { opacity: 1, y: 0 },
+      transition: { duration: 0.5, delay: introDelay(delay), ease },
+    };
 
 const navLinks = [
   { label: "ABOUT", href: "#about" },
@@ -638,7 +645,7 @@ export default function Home() {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll, { passive: true });
     if (!hasVisited) {
-      const timer = setTimeout(() => { hasVisited = true; }, 3000);
+      const timer = setTimeout(() => { hasVisited = true; }, 1000);
       return () => { clearTimeout(timer); window.removeEventListener("scroll", onScroll); };
     }
     return () => window.removeEventListener("scroll", onScroll);
@@ -646,7 +653,6 @@ export default function Home() {
 
   return (
     <>
-      <LoadingScreen />
       <CustomCursor />
 
       {/* Responsive overrides — inline styles don't support media queries */}
@@ -727,7 +733,7 @@ export default function Home() {
             <motion.h1
               initial={hasVisited ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={hasVisited ? undefined : { delay: 2.7, duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+              transition={hasVisited ? undefined : { delay: 0, duration: 0.55, ease }}
               className="font-serif text-5xl tracking-tight lg:text-6xl"
             >
               Uzay Poyraz
@@ -1041,7 +1047,7 @@ export default function Home() {
 
           {/* Footer */}
           <div className="mt-20 text-xs text-text-muted">
-            built by uzay. and yes, i made <span className="text-accent">claude</span> do the <span className="text-accent">claude</span> loading screen. &copy; {new Date().getFullYear()}
+            Built by Uzay. &copy; 2026
           </div>
 
         </div>

@@ -2,24 +2,24 @@
 
 /* Dark (default) */
 :root {
-  --bg: #0c0c0c;
-  --bg-elevated: #141414;
-  --text: #e8e2d9;
-  --text-muted: #a39e95;
-  --accent: #c45d3e;
-  --accent-hover: #d4714f;
-  --border: #2a2a2a;
+  --bg: #05070a;
+  --bg-elevated: #0d1117;
+  --text: #e7edf5;
+  --text-muted: #93a1b2;
+  --accent: #4f9cff;
+  --accent-hover: #7ab6ff;
+  --border: #1f2937;
 }
 
-/* Light — clean, high contrast, inspired by Claude's light mode */
+/* Light */
 [data-theme="light"] {
-  --bg: #f9f9f7;
+  --bg: #f7f9fc;
   --bg-elevated: #ffffff;
-  --text: #1a1a1a;
-  --text-muted: #5a554e;
-  --accent: #b5513a;
-  --accent-hover: #943f2d;
-  --border: #e2ddd7;
+  --text: #111827;
+  --text-muted: #5b6778;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --border: #d7dee8;
 }
 
 @theme inline {

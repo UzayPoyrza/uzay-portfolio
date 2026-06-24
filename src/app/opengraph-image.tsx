@@ -10,7 +10,7 @@ export default function Image() {
     (
       <div
         style={{
-          background: "#0c0c0c",
+          background: "#05070a",
           width: "100%",
           height: "100%",
           display: "flex",
@@ -32,7 +32,7 @@ export default function Image() {
             style={{
               fontSize: 72,
               fontWeight: 700,
-              color: "#e8e2d9",
+              color: "#e7edf5",
               letterSpacing: "-1px",
             }}
           >
@@ -42,14 +42,14 @@ export default function Image() {
             style={{
               width: 60,
               height: 3,
-              background: "#c45d3e",
+              background: "#4f9cff",
               borderRadius: 2,
             }}
           />
           <div
             style={{
               fontSize: 28,
-              color: "#a09888",
+              color: "#93a1b2",
               fontWeight: 400,
             }}
           >
