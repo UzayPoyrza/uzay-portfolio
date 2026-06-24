@@ -68,7 +68,7 @@ function AboutCollapsible({ description }: { description: string }) {
             {preview}...{" "}
             <button
               onClick={() => setExpanded(true)}
-              className="text-text-muted/50 transition-colors hover:text-accent"
+              className="font-medium text-accent transition-colors hover:text-accent-hover"
             >
               read more
             </button>
@@ -81,7 +81,7 @@ function AboutCollapsible({ description }: { description: string }) {
                 {" "}
                 <button
                   onClick={() => setExpanded(false)}
-                  className="text-text-muted/50 transition-colors hover:text-accent"
+                  className="font-medium text-accent transition-colors hover:text-accent-hover"
                 >
                   read less
                 </button>
@@ -458,7 +458,7 @@ export default function ProjectPage() {
               <SectionLabel>Stack</SectionLabel>
               <div className="flex flex-wrap gap-2">
                 {project.tech.map((t) => (
-                  <span key={t} className="rounded-md border border-text/8 px-2.5 py-1 font-mono text-[11px] text-text-muted/70">
+                  <span key={t} className="rounded-md border border-tag-border bg-tag-bg px-2.5 py-1 font-mono text-[11px] text-text-muted">
                     {t}
                   </span>
                 ))}
@@ -472,7 +472,7 @@ export default function ProjectPage() {
                 <div className="space-y-3">
                   {project.collaborators.map((c, i) => (
                     <div key={i} className="flex items-start gap-3">
-                      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-bg-elevated border border-border/30 text-[10px] font-medium text-text-muted">
+                      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-bg-panel border border-border text-[10px] font-medium text-text-muted">
                         {c.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
                       </div>
                       <div className="min-w-0">
@@ -483,7 +483,7 @@ export default function ProjectPage() {
                         ) : (
                           <p className="text-sm text-text">{c.name}</p>
                         )}
-                        <p className="text-[11px] text-text-muted/60">{c.role}</p>
+                        <p className="text-[11px] text-text-muted">{c.role}</p>
                       </div>
                     </div>
                   ))}
@@ -543,12 +543,12 @@ export default function ProjectPage() {
         )}
 
         {/* ── Project navigation ── */}
-        <footer className="border-t border-border/20 py-10 md:py-14">
+        <footer className="border-t border-border py-10 md:py-14">
           <div className="grid gap-4 md:grid-cols-2">
             {prevProject ? (
               <Link
                 href={`/projects/${prevProject.id}`}
-                className="group flex flex-col rounded-xl border border-border/20 p-5 transition-all hover:border-accent/20 hover:bg-bg-elevated/30"
+                className="group flex flex-col rounded-xl border border-border bg-bg-panel p-5 transition-all hover:border-accent/35 hover:bg-bg-panel-hover"
               >
                 <span className="mb-1.5 text-[10px] font-medium uppercase tracking-widest text-text-muted">Previous</span>
                 <span className="font-serif text-lg text-text transition-colors group-hover:text-accent">{prevProject.title}</span>
@@ -557,7 +557,7 @@ export default function ProjectPage() {
             {nextProject && (
               <Link
                 href={`/projects/${nextProject.id}`}
-                className="group flex flex-col items-end rounded-xl border border-border/20 p-5 text-right transition-all hover:border-accent/20 hover:bg-bg-elevated/30"
+                className="group flex flex-col items-end rounded-xl border border-border bg-bg-panel p-5 text-right transition-all hover:border-accent/35 hover:bg-bg-panel-hover"
               >
                 <span className="mb-1.5 text-[10px] font-medium uppercase tracking-widest text-text-muted">Next</span>
                 <span className="font-serif text-lg text-text transition-colors group-hover:text-accent">{nextProject.title}</span>

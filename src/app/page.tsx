@@ -397,7 +397,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
       animate={(hasVisited || inView) ? { opacity: 1, y: 0 } : {}}
       transition={hasVisited ? undefined : { duration: 0.8, delay: 0.1, ease }}
       transformTemplate={({ y }) => y && y !== "0px" && y !== 0 ? `translateY(${y})` : "none"}
-      className="group rounded-2xl border border-border/30 bg-bg-elevated/10 p-6 transition-colors duration-300 hover:border-accent/15 hover:bg-bg-elevated/20 md:p-8"
+      className="light-visible-shadow group rounded-2xl border border-border bg-bg-panel p-6 transition-colors duration-300 hover:border-accent/35 hover:bg-bg-panel-hover md:p-8"
     >
       <div
         className={`flex flex-col gap-8 ${
@@ -459,7 +459,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
                   : part
               );
             return (
-              <p className="text-sm leading-relaxed text-text-muted/70">
+              <p className="light-readable-muted text-sm leading-relaxed text-text-muted/80">
                 {renderBold(project.description)}
               </p>
             );
@@ -467,7 +467,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
 
           <div className="flex flex-wrap gap-1.5 pt-1">
             {project.tech.map((t) => (
-              <span key={t} className="rounded border border-text/10 px-1.5 py-0.5 font-mono text-[10px] text-text-muted/60">
+              <span key={t} className="rounded border border-tag-border bg-tag-bg px-1.5 py-0.5 font-mono text-[10px] text-text-muted">
                 {t}
               </span>
             ))}
@@ -501,7 +501,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
           <div className={`w-full ${!isMobile && !isTerminal && project.id !== "checkers-ai" ? "web-mockup-zoom" : ""}`}>
           {/* Device toggle */}
           {project.id === "incraft" && (
-            <div className="inline-flex rounded-lg border border-border/40 p-0.5">
+            <div className="inline-flex rounded-lg border border-border bg-bg-panel p-0.5">
               <button
                 onClick={() => setView("app")}
                 className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[11px] font-medium transition-all duration-200 ${
@@ -533,7 +533,7 @@ function ProjectShowcase({ project, website, index }: { project: (typeof project
             </div>
           )}
           {website && isMobile && !["neurotype", "volo"].includes(project.id) && (
-            <div className="inline-flex rounded-lg border border-border/40 p-0.5">
+            <div className="inline-flex rounded-lg border border-border bg-bg-panel p-0.5">
               <button
                 onClick={() => setView("app")}
                 className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[11px] font-medium transition-all duration-200 ${
