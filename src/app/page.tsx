@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import CustomCursor from "@/components/layout/CustomCursor";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { personal } from "@/data/personal";
@@ -653,8 +652,6 @@ export default function Home() {
 
   return (
     <>
-      <CustomCursor />
-
       {/* Responsive overrides — inline styles don't support media queries */}
       <style>{`
         @media (max-width: 767px) {
