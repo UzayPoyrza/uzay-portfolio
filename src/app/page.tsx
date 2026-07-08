@@ -830,9 +830,8 @@ export default function Home() {
               {...fadeUp(2.8)}
               className="leading-relaxed text-text-muted"
             >
-              I started coding in high school in Japan and never really stopped, building everything from
-              tools for Turkish Airlines pilots to e-commerce platforms at <span className="text-text">Optimum7</span> to
-              RL agents that beat me at board games.
+              I started coding in high school in Japan and never really stopped. Before AI, I was building tools for Turkish Airlines pilots,
+              e-commerce platforms at <span className="text-text">Optimum7</span>, and RL agents that beat me at board games.
             </motion.p>
             <motion.p
               {...fadeUp(2.9)}
