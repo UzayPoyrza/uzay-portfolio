@@ -830,18 +830,10 @@ export default function Home() {
               {...fadeUp(2.8)}
               className="leading-relaxed text-text-muted"
             >
-              I started coding in high school in Japan and never really stopped. Before AI, I was building tools for Turkish Airlines pilots,
-              e-commerce platforms at <span className="text-text">Optimum7</span>, and RL agents that beat me at board games.
-            </motion.p>
-            <motion.p
-              {...fadeUp(2.9)}
-              className="mt-4 leading-relaxed text-text-muted"
-            >
-              Now I&apos;m focused on systems: at <span className="text-text">Columbia</span> I help run a fleet of
-              research HPC supercomputers, from the Slurm scheduler to storage and networking, and build internal AI
-              tooling around them.
-              On the side I run <span className="text-text">LaunchSpace</span>, a product studio I founded to build and
-              ship unique ideas from zero to launch. Try them below.
+              I started coding in high school in Japan and never really stopped. Now I help run a fleet of
+              research HPC supercomputers at <span className="text-text">Columbia</span>, from the Slurm scheduler to
+              storage and networking, and build internal AI tooling around them. On the side I run <span className="text-text">LaunchSpace</span>,
+              a product studio I founded to build and ship unique ideas from zero to launch. Try them below.
             </motion.p>
           </section>
 
