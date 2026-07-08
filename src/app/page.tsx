@@ -736,28 +736,10 @@ export default function Home() {
             >
               Uzay Poyraz
             </motion.h1>
-            <motion.a
-              href={`mailto:${personal.email}`}
-              {...fadeUp(2.8)}
-              className="group mt-3 inline-flex items-center gap-2 text-lg text-text-muted transition-colors hover:text-accent"
-            >
-              send me cool engineering problems
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                aria-hidden="true"
-              >
-                <path d="M7 17 17 7" />
-                <path d="M7 7h10v10" />
-              </svg>
-            </motion.a>
+            <motion.div {...fadeUp(2.8)} className="mt-3 leading-snug">
+              <p className="text-sm text-text-muted">HPC Systems Engineer Intern</p>
+              <p className="text-sm text-accent">@ Columbia University</p>
+            </motion.div>
 
             {/* Nav links with lines */}
             <motion.nav
@@ -848,7 +830,6 @@ export default function Home() {
               {...fadeUp(2.8)}
               className="leading-relaxed text-text-muted"
             >
-              CS grad from <span className="text-text">Skidmore College</span>.
               I started coding in high school in Japan and never really stopped. Before AI, I was building tools for Turkish Airlines pilots,
               e-commerce platforms at <span className="text-text">Optimum7</span>, and RL agents that beat me at board games.
             </motion.p>
@@ -856,10 +837,10 @@ export default function Home() {
               {...fadeUp(2.9)}
               className="mt-4 leading-relaxed text-text-muted"
             >
-              Now with AI, I get to spend more time on the part I enjoy most: engineering the architecture
-              behind unique problems and turning ideas that do not have an obvious reference point into real products.
-              I&apos;m a firm believer that AI should not do the thinking - it should help you move faster once the thinking is clear.
-              Under <span className="text-text">LaunchSpace</span> I&apos;ve taken every product from zero to launch, focusing on performance, beautiful UIs and having real-world impact. Try them below.
+              Now with AI, I get to spend more time on the part I enjoy most: architecting solutions
+              to problems that don&apos;t have an obvious reference point. At <span className="text-text">Columbia</span> I
+              keep research supercomputers running and build AI tooling for them; under <span className="text-text">LaunchSpace</span>,
+              I&apos;ve shipped every product from zero to launch. Try them below.
             </motion.p>
           </section>
 
