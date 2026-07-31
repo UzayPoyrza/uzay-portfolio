@@ -11,12 +11,12 @@ export interface TimelineEntry {
 export const timeline: TimelineEntry[] = [
   {
     type: "work",
-    title: "HPC System Engineer Intern",
+    title: "Research Systems Engineer Intern",
     organization: "Columbia University",
     url: "https://www.columbia.edu/",
     period: "2026 – Present",
     description:
-      "Maintain multi-cluster production Linux HPC environments (Slurm) for university researchers. Deliver fleet improvements like network segmentation, alerting, and storage remediation while building internal AI tooling.",
+      "Maintain multi-cluster production Linux HPC environments (Slurm) for university researchers.",
   },
   {
     type: "work",

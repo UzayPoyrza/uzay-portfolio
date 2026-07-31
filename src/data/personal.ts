@@ -5,7 +5,7 @@ export const personal = {
   linkedin: "https://www.linkedin.com/in/uzaypoyraz/",
   github: "https://github.com/UzayPoyrza",
   resume:
-    "https://docs.google.com/document/d/1SSvYm8DoJo-UKDI9762KLhVnAI-w6U4225yhlcZVt8M/edit?usp=sharing",
+    "https://docs.google.com/document/d/1uyWlkLPmvWG-74vCoih6bsPcocpbmfkYbUVvlI1qPFM/edit?tab=t.0",
   profileImage: "/images/profile/most.png",
   bio: [
     "I'm a Computer Science graduate from Skidmore College as a Davis-UWC Scholar. My journey with technology started in Japan, where I studied at UWC ISAK and was immersed in a culture of innovation.",

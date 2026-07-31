@@ -737,7 +737,7 @@ export default function Home() {
               Uzay Poyraz
             </motion.h1>
             <motion.div {...fadeUp(2.8)} className="mt-3 leading-snug">
-              <p className="text-sm text-text-muted">HPC Systems Engineer Intern</p>
+              <p className="text-sm text-text-muted">Research Systems Engineer Intern</p>
               <p className="text-sm text-accent">@ Columbia University</p>
             </motion.div>
 
@@ -832,7 +832,7 @@ export default function Home() {
             >
               I started coding in high school in Japan and never really stopped. Now I help run a fleet of
               research HPC supercomputers at <span className="text-text">Columbia</span>, from the Slurm scheduler to
-              storage and networking, and build internal AI tooling around them. On the side I run <span className="text-text">LaunchSpace</span>,
+              storage and networking, and build internal tools. On the side I run <span className="text-text">LaunchSpace</span>,
               a product studio I founded to build and ship unique ideas from zero to launch. Try them below.
             </motion.p>
           </section>
