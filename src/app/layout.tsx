@@ -16,11 +16,11 @@ const instrumentSerif = Instrument_Serif({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://uzay.dev"),
-  title: "Uzay Poyraz - CS Graduate, Builder, Explorer",
+  title: "Uzay Poyraz Dev Portfolio",
   description:
     "Portfolio of Uzay Poyraz. Computer Science graduate from Skidmore College, Davis-UWC Scholar. Software engineering, AI, and full-stack development.",
   openGraph: {
-    title: "Uzay Poyraz - CS Graduate, Builder, Explorer",
+    title: "Uzay Poyraz Dev Portfolio",
     description:
       "Portfolio of Uzay Poyraz. Computer Science graduate, Davis-UWC Scholar. Software engineering, AI, and full-stack development.",
     type: "website",
