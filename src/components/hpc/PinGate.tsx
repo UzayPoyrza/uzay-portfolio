@@ -40,7 +40,7 @@ export default function PinGate() {
       }
 
       setStatus("success");
-      await new Promise((resolve) => window.setTimeout(resolve, 700));
+      await new Promise((resolve) => window.setTimeout(resolve, 600));
       window.location.replace("/dashboard");
     } catch {
       setStatus("idle");
@@ -49,91 +49,78 @@ export default function PinGate() {
     }
   }
 
-  const successful = status === "success";
-
   return (
     <main className="hpc-access-shell">
       <section
-        className={`hpc-gate${error ? " has-error" : ""}${successful ? " is-success" : ""}`}
+        className={`hpc-gate${error ? " has-error" : ""}`}
         aria-labelledby="pin-title"
       >
-        <div className="hpc-gate-icon" aria-hidden="true">
-          {successful ? <CheckIcon /> : <LockIcon />}
-        </div>
-
-        <p className="hpc-gate-label">HPC Sites Markup Builder</p>
-        <h1 id="pin-title">{successful ? "Access granted" : "Enter PIN"}</h1>
-        <p className="hpc-gate-copy">
-          {successful
-            ? "Opening the private workspace…"
-            : "Enter the four-digit PIN to continue."}
-        </p>
-
-        {successful ? (
-          <div className="hpc-success-status" role="status">
-            <span /> Secure session started
+        {status === "success" ? (
+          <div className="hpc-access-granted" role="status">
+            <h1 id="pin-title">Access granted</h1>
+            <SuccessArrowIcon />
           </div>
         ) : (
-          <form onSubmit={submit} className="hpc-pin-form">
-            <div className="hpc-pin-row">
-              <label className="sr-only" htmlFor="hpc-pin">Four-digit PIN</label>
-              <input
-                ref={inputRef}
-                id="hpc-pin"
-                aria-describedby="hpc-pin-message"
-                aria-invalid={Boolean(error)}
-                autoComplete="one-time-code"
-                autoFocus
-                disabled={status === "submitting"}
-                inputMode="numeric"
-                maxLength={PIN_LENGTH}
-                onChange={(event) => updatePin(event.target.value)}
-                pattern="[0-9]*"
-                placeholder="••••"
-                type="password"
-                value={pin}
-              />
+          <>
+            <h1 id="pin-title">Enter PIN</h1>
+            <p className="hpc-gate-copy">Enter the four-digit PIN to continue.</p>
+
+            <form onSubmit={submit} className="hpc-pin-form">
+              <label className="hpc-pin-control" htmlFor="hpc-pin">
+                <span className="sr-only">Four-digit PIN</span>
+                <span className="hpc-pin-slots" aria-hidden="true">
+                  {Array.from({ length: PIN_LENGTH }, (_, index) => (
+                    <span
+                      className={`hpc-pin-slot${index === Math.min(pin.length, PIN_LENGTH - 1) ? " is-active" : ""}`}
+                      key={index}
+                    >
+                      {pin[index] ? "•" : ""}
+                    </span>
+                  ))}
+                </span>
+
+                <input
+                  ref={inputRef}
+                  id="hpc-pin"
+                  className="hpc-pin-input"
+                  aria-describedby="hpc-pin-message"
+                  aria-invalid={Boolean(error)}
+                  autoComplete="one-time-code"
+                  autoFocus
+                  disabled={status === "submitting"}
+                  inputMode="numeric"
+                  maxLength={PIN_LENGTH}
+                  onChange={(event) => updatePin(event.target.value)}
+                  pattern="[0-9]*"
+                  type="password"
+                  value={pin}
+                />
+              </label>
+
               <button
                 type="submit"
+                className="hpc-pin-submit"
                 disabled={pin.length !== PIN_LENGTH || status === "submitting"}
               >
                 {status === "submitting" ? "Checking…" : "Enter"}
-                <ArrowIcon />
               </button>
-            </div>
 
-            <p
-              id="hpc-pin-message"
-              className="hpc-pin-message"
-              aria-live="polite"
-            >
-              {error}
-            </p>
-          </form>
+              <p
+                id="hpc-pin-message"
+                className="hpc-pin-message"
+                aria-live="polite"
+              >
+                {error}
+              </p>
+            </form>
+          </>
         )}
       </section>
     </main>
   );
 }
 
-function LockIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M7.5 10V7.5a4.5 4.5 0 0 1 9 0V10" />
-      <rect x="5" y="10" width="14" height="10" rx="2" />
-    </svg>
-  );
-}
-
-function CheckIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="m6.5 12.5 3.5 3.5 7.5-8" />
-    </svg>
-  );
-}
-
-function ArrowIcon() {
+function SuccessArrowIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M5 12h14M14 7l5 5-5 5" />
