@@ -41,7 +41,7 @@ async function proxyHpcFile(
 ) {
   if (!requestHasHpcSession(request)) {
     if (request.headers.get("sec-fetch-dest") === "document") {
-      return NextResponse.redirect(new URL("/hpc", request.url), 303);
+      return NextResponse.redirect(new URL("/enter", request.url), 303);
     }
     return new NextResponse("Authentication required.", {
       status: 401,

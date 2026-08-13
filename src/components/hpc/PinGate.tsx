@@ -1,73 +1,30 @@
 "use client";
 
-import { FormEvent, KeyboardEvent, useRef, useState } from "react";
-import Link from "next/link";
+import { FormEvent, useRef, useState } from "react";
 
 const PIN_LENGTH = 4;
+type GateStatus = "idle" | "submitting" | "success";
 
 export default function PinGate() {
-  const [digits, setDigits] = useState(["", "", "", ""]);
+  const [pin, setPin] = useState("");
   const [error, setError] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const inputs = useRef<Array<HTMLInputElement | null>>([]);
+  const [status, setStatus] = useState<GateStatus>("idle");
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  function replaceDigits(
-    nextDigits: string[],
-    focusIndex?: number,
-    clearError = true,
-  ) {
-    setDigits(nextDigits);
-    if (clearError) setError("");
-    if (focusIndex !== undefined) {
-      requestAnimationFrame(() => inputs.current[focusIndex]?.focus());
-    }
-  }
-
-  function handleChange(index: number, value: string) {
-    const numbers = value.replace(/\D/g, "");
-    if (!numbers) {
-      const next = [...digits];
-      next[index] = "";
-      replaceDigits(next);
-      return;
-    }
-
-    const next = [...digits];
-    numbers.slice(0, PIN_LENGTH - index).split("").forEach((digit, offset) => {
-      next[index + offset] = digit;
-    });
-    replaceDigits(next, Math.min(index + numbers.length, PIN_LENGTH - 1));
-  }
-
-  function handleKeyDown(index: number, event: KeyboardEvent<HTMLInputElement>) {
-    if (event.key === "Backspace" && !digits[index] && index > 0) {
-      event.preventDefault();
-      const next = [...digits];
-      next[index - 1] = "";
-      replaceDigits(next, index - 1);
-    }
-
-    if (event.key === "ArrowLeft" && index > 0) {
-      event.preventDefault();
-      inputs.current[index - 1]?.focus();
-    }
-
-    if (event.key === "ArrowRight" && index < PIN_LENGTH - 1) {
-      event.preventDefault();
-      inputs.current[index + 1]?.focus();
-    }
+  function updatePin(value: string) {
+    setPin(value.replace(/\D/g, "").slice(0, PIN_LENGTH));
+    if (error) setError("");
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const pin = digits.join("");
-    if (pin.length !== PIN_LENGTH || submitting) return;
+    if (pin.length !== PIN_LENGTH || status !== "idle") return;
 
-    setSubmitting(true);
+    setStatus("submitting");
     setError("");
 
     try {
-      const response = await fetch("/api/hpc/auth", {
+      const response = await fetch("/api/dashboard/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pin }),
@@ -75,82 +32,86 @@ export default function PinGate() {
       const body = await response.json().catch(() => ({}));
 
       if (!response.ok) {
+        setStatus("idle");
+        setPin("");
         setError(body.error || "Unable to unlock the preview.");
-        replaceDigits(["", "", "", ""], 0, false);
+        requestAnimationFrame(() => inputRef.current?.focus());
         return;
       }
 
-      window.location.replace("/hpc");
+      setStatus("success");
+      await new Promise((resolve) => window.setTimeout(resolve, 700));
+      window.location.replace("/dashboard");
     } catch {
-      setError("Couldn’t reach the preview. Check your connection and try again.");
-    } finally {
-      setSubmitting(false);
+      setStatus("idle");
+      setError("Couldn’t connect. Check your connection and try again.");
+      requestAnimationFrame(() => inputRef.current?.focus());
     }
   }
 
+  const successful = status === "success";
+
   return (
     <main className="hpc-access-shell">
-      <div className="hpc-orbit hpc-orbit-one" aria-hidden="true" />
-      <div className="hpc-orbit hpc-orbit-two" aria-hidden="true" />
+      <section
+        className={`hpc-gate${error ? " has-error" : ""}${successful ? " is-success" : ""}`}
+        aria-labelledby="pin-title"
+      >
+        <div className="hpc-gate-icon" aria-hidden="true">
+          {successful ? <CheckIcon /> : <LockIcon />}
+        </div>
 
-      <div className="hpc-access-topline">
-        <Link href="/" className="hpc-wordmark" aria-label="Uzay.dev home">
-          <span className="hpc-wordmark-dot" />
-          uzay.dev
-        </Link>
-        <span className="hpc-private-label">
-          <LockIcon /> Private preview
-        </span>
-      </div>
-
-      <section className="hpc-pin-panel" aria-labelledby="pin-title">
-        <div className="hpc-access-index" aria-hidden="true">01 / ACCESS</div>
-        <div className="hpc-lock-seal" aria-hidden="true"><LockIcon /></div>
-        <p className="hpc-eyebrow">HPC Sites Markup Builder</p>
-        <h1 id="pin-title">Enter your access PIN.</h1>
-        <p className="hpc-pin-copy">
-          This review space is private. Use the four-digit PIN shared with you.
+        <p className="hpc-gate-label">HPC Sites Markup Builder</p>
+        <h1 id="pin-title">{successful ? "Access granted" : "Enter PIN"}</h1>
+        <p className="hpc-gate-copy">
+          {successful
+            ? "Opening the private workspace…"
+            : "Enter the four-digit PIN to continue."}
         </p>
 
-        <form onSubmit={submit} className="hpc-pin-form">
-          <div className="hpc-pin-inputs" aria-label="Four-digit access PIN">
-            {digits.map((digit, index) => (
+        {successful ? (
+          <div className="hpc-success-status" role="status">
+            <span /> Secure session started
+          </div>
+        ) : (
+          <form onSubmit={submit} className="hpc-pin-form">
+            <div className="hpc-pin-row">
+              <label className="sr-only" htmlFor="hpc-pin">Four-digit PIN</label>
               <input
-                key={index}
-                ref={(node) => { inputs.current[index] = node; }}
-                aria-label={`PIN digit ${index + 1}`}
+                ref={inputRef}
+                id="hpc-pin"
+                aria-describedby="hpc-pin-message"
                 aria-invalid={Boolean(error)}
-                autoComplete={index === 0 ? "one-time-code" : "off"}
-                autoFocus={index === 0}
-                className={error ? "is-error" : ""}
-                disabled={submitting}
+                autoComplete="one-time-code"
+                autoFocus
+                disabled={status === "submitting"}
                 inputMode="numeric"
-                maxLength={index === 0 ? 4 : 1}
-                onChange={(event) => handleChange(index, event.target.value)}
-                onKeyDown={(event) => handleKeyDown(index, event)}
+                maxLength={PIN_LENGTH}
+                onChange={(event) => updatePin(event.target.value)}
                 pattern="[0-9]*"
+                placeholder="••••"
                 type="password"
-                value={digit}
+                value={pin}
               />
-            ))}
-          </div>
+              <button
+                type="submit"
+                disabled={pin.length !== PIN_LENGTH || status === "submitting"}
+              >
+                {status === "submitting" ? "Checking…" : "Enter"}
+                <ArrowIcon />
+              </button>
+            </div>
 
-          <div className="hpc-pin-status" aria-live="polite">
-            {error || "Access expires after eight hours."}
-          </div>
-
-          <button
-            type="submit"
-            className="hpc-unlock-button"
-            disabled={digits.join("").length !== PIN_LENGTH || submitting}
-          >
-            <span>{submitting ? "Checking…" : "Continue to dashboard"}</span>
-            <ArrowIcon />
-          </button>
-        </form>
+            <p
+              id="hpc-pin-message"
+              className="hpc-pin-message"
+              aria-live="polite"
+            >
+              {error}
+            </p>
+          </form>
+        )}
       </section>
-
-      <p className="hpc-access-footer">Internal project review · Authorized access only</p>
     </main>
   );
 }
@@ -160,6 +121,14 @@ function LockIcon() {
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M7.5 10V7.5a4.5 4.5 0 0 1 9 0V10" />
       <rect x="5" y="10" width="14" height="10" rx="2" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="m6.5 12.5 3.5 3.5 7.5-8" />
     </svg>
   );
 }

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   clearHpcSessionCookies,
+  dashboardIdForPin,
   isSameOriginRequest,
-  pinMatches,
   setHpcSessionCookie,
 } from "@/lib/hpc/auth";
 import { getHpcConfigurationProblem } from "@/lib/hpc/config";
@@ -22,9 +22,9 @@ export async function POST(request: NextRequest) {
 
   const configurationProblem = getHpcConfigurationProblem();
   if (configurationProblem) {
-    console.error(`HPC review configuration error: ${configurationProblem}`);
+    console.error(`Dashboard configuration error: ${configurationProblem}`);
     return NextResponse.json(
-      { ok: false, error: "This private preview is temporarily unavailable." },
+      { ok: false, error: "This private workspace is temporarily unavailable." },
       { status: 503, headers: noStoreHeaders },
     );
   }
@@ -40,7 +40,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (!/^\d{4}$/.test(pin) || !pinMatches(pin)) {
+  const dashboardId = /^\d{4}$/.test(pin) ? dashboardIdForPin(pin) : null;
+  if (!dashboardId) {
     return NextResponse.json(
       { ok: false, error: "That PIN didn’t match. Try again." },
       { status: 401, headers: noStoreHeaders },
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
     { ok: true },
     { status: 200, headers: noStoreHeaders },
   );
-  setHpcSessionCookie(response);
+  setHpcSessionCookie(response, dashboardId);
   return response;
 }
 

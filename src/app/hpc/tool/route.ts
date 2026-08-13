@@ -7,7 +7,7 @@ import { getLatestHpcRevision, isFullGitSha } from "@/lib/hpc/github";
 
 export async function GET(request: NextRequest) {
   if (!requestHasHpcSession(request)) {
-    return NextResponse.redirect(new URL("/hpc", request.url), 303);
+    return NextResponse.redirect(new URL("/enter", request.url), 303);
   }
 
   let revision = "";
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (!revision) {
-    const unavailable = new URL("/hpc", request.url);
+    const unavailable = new URL("/dashboard", request.url);
     unavailable.searchParams.set("sync", "unavailable");
     return NextResponse.redirect(unavailable, 303);
   }
