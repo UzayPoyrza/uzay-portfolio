@@ -148,7 +148,7 @@
 
 /* Dashboard */
 .hpc-dashboard-shell {
-  --hpc-bg: #141d1a;
+  --hpc-bg: #05070a;
   --hpc-card: #222b3f;
   --hpc-card-hover: #293450;
   --hpc-ink: #e8ecf4;
@@ -160,7 +160,7 @@
   --hpc-segment-hover: #34415f;
   --hpc-panel: #202a41;
   --hpc-label: #7f9fd8;
-  --hpc-accent: #5b8def;
+  --hpc-accent: #4f9cff;
   --hpc-scrim: rgb(13 17 26 / 55%);
   --hpc-tile-shadow: none;
   position: relative;
@@ -191,7 +191,7 @@
   --hpc-segment-hover: #dde4f0;
   --hpc-panel: #ffffff;
   --hpc-label: #3b6bc4;
-  --hpc-accent: #2b6cd4;
+  --hpc-accent: #1d4ed8;
   --hpc-scrim: rgb(240 243 248 / 50%);
   --hpc-tile-shadow: 0 1px 2px rgb(15 23 42 / 7%);
 }
@@ -298,6 +298,11 @@
 .hpc-original-icon-button:focus-visible {
   outline: 2px solid var(--hpc-accent);
   outline-offset: 1px;
+}
+
+.hpc-original-icon-button:disabled {
+  cursor: wait;
+  opacity: 0.5;
 }
 
 .hpc-original-icon-button svg {
@@ -423,7 +428,7 @@
 
 .hpc-original-welcome {
   margin: 0 0 clamp(2rem, 4vh, 3rem) 0.2rem;
-  color: var(--hpc-heading);
+  color: var(--hpc-accent);
   font-size: 26px;
   font-weight: 600;
   letter-spacing: 0.01em;

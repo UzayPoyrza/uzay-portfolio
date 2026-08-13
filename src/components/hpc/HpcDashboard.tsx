@@ -12,7 +12,7 @@ type DashboardTheme = "night" | "day";
 
 const PRESETS: Record<DashboardTheme, string[]> = {
   night: [
-    "#171e2e",
+    "#05070a",
     "#0d1117",
     "#1a1a1f",
     "#141d1a",
@@ -42,6 +42,7 @@ export default function HpcDashboard({ dashboardId, hasHpcTool }: Props) {
   const [imageUrl, setImageUrl] = useState("");
   const [query, setQuery] = useState("");
   const [now, setNow] = useState<Date | null>(null);
+  const [locking, setLocking] = useState(false);
   const backgroundRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -136,6 +137,16 @@ export default function HpcDashboard({ dashboardId, hasHpcTool }: Props) {
       window.open("/hpc/tool", "_blank", "noopener");
     } else {
       googleSearch();
+    }
+  }
+
+  async function lockDashboard() {
+    if (locking) return;
+    setLocking(true);
+    try {
+      await fetch("/api/dashboard/auth", { method: "DELETE" });
+    } finally {
+      window.location.replace("/enter");
     }
   }
 
@@ -250,6 +261,17 @@ export default function HpcDashboard({ dashboardId, hasHpcTool }: Props) {
             >
               <ReloadIcon />
             </button>
+
+            <button
+              className="hpc-original-icon-button"
+              type="button"
+              title="Lock"
+              aria-label="Lock dashboard"
+              disabled={locking}
+              onClick={lockDashboard}
+            >
+              <LockIcon />
+            </button>
           </div>
 
           <div className="hpc-original-clock" aria-live="off">
@@ -343,6 +365,15 @@ function MockupViewerIcon() {
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <rect x="3.5" y="4.5" width="17" height="12" rx="1.5" />
       <path d="M8 20h8M12 16.5V20" />
+    </svg>
+  );
+}
+
+function LockIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M8 10V7.5a4 4 0 0 1 8 0V10" />
+      <rect x="5.5" y="10" width="13" height="10" rx="2" />
     </svg>
   );
 }
