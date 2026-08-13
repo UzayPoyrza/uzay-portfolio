@@ -6,12 +6,14 @@ import type { HpcRevision } from "@/lib/hpc/github";
 
 type Props = {
   dashboardId: string;
+  hasHpcTool: boolean;
   revision: HpcRevision | null;
   syncUnavailable: boolean;
 };
 
 export default function HpcDashboard({
   dashboardId,
+  hasHpcTool,
   revision,
   syncUnavailable,
 }: Props) {
@@ -77,7 +79,7 @@ export default function HpcDashboard({
           <h2>Tools</h2>
         </div>
 
-        <div className="hpc-tools-grid">
+        {hasHpcTool ? <div className="hpc-tools-grid">
           <article className="hpc-tool-tile">
             {/* Full navigation is intentional: the destination is proxied static HTML. */}
             {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
@@ -125,7 +127,11 @@ export default function HpcDashboard({
               )}
             </div>
           </article>
-        </div>
+        </div> : (
+          <p className="hpc-sync-note" role="status">
+            No tools are assigned to this workspace yet.
+          </p>
+        )}
 
         {syncUnavailable && (
           <p className="hpc-sync-note" role="status">
