@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  async rewrites() {
+    return [{ source: "/ibm", destination: "/ibm.html" }];
+  },
   async headers() {
     return [
       {
